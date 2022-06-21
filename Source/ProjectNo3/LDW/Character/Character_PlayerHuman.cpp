@@ -75,6 +75,8 @@ void ACharacter_PlayerHuman::BeginPlay()
 	InitStateMachine();
 	InitTimelines();
 
+	HandleOnPossessed(Controller);
+
 	// Bind handling functions to delegates
 	if (m_CameraSystemActor != nullptr)
 	{
@@ -97,7 +99,6 @@ void ACharacter_PlayerHuman::Tick(float DeltaTime)
 void ACharacter_PlayerHuman::PossessedBy(AController* NewController) 
 {
 	Super::PossessedBy(NewController);
-	HandleOnPossessed(NewController);
 }
 
 void ACharacter_PlayerHuman::UnPossessed() 

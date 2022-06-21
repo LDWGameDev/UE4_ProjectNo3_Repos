@@ -3,6 +3,7 @@
 
 #include "PlayerHumanState_AssassinJog.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PlayerHumanState_AssassinDash.h"
 
 
 UPlayerHumanState_AssassinJog::UPlayerHumanState_AssassinJog()

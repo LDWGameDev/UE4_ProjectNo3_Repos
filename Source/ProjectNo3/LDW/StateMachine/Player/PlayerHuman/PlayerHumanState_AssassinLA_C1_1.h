@@ -26,6 +26,7 @@ protected:
 private:
 	const float c_CooldownTime = 1.0f;
 	const float c_AdditionalArmLength = 20.0f;
+	const FStruct_AttackStateDefinition c_AttackStateDefinition = FStruct_AttackStateDefinition();
 
 	FDelegate1_MovementSignature* m_MoveForward_DelegateREF;
 	FDelegate1_MovementSignature* m_MoveRight_DelegateREF;

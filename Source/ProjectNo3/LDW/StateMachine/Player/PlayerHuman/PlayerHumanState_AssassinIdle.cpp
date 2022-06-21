@@ -2,6 +2,7 @@
 
 
 #include "PlayerHumanState_AssassinIdle.h"
+#include "PlayerHumanState_AssassinDash.h"
 
 
 UPlayerHumanState_AssassinIdle::UPlayerHumanState_AssassinIdle()

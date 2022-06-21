@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "../../BaseState.h"
+#include "../../../System/System_CombatContainer.h"
 #include "../../../Character/Character_PlayerHuman.h"
 #include "PlayerHuman_BaseState.generated.h"
 
