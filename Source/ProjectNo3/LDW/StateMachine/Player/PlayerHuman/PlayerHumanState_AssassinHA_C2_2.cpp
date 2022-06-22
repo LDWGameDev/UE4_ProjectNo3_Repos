@@ -10,6 +10,8 @@ UPlayerHumanState_AssassinHA_C2_2::UPlayerHumanState_AssassinHA_C2_2()
 	m_StateGameplayTag = FGameplayTag::RequestGameplayTag("StateMachine.PlayerState.Human.Action.HeavyAttack.AssassinHeavyAttack_Combo2_Phase2", false);
 	b_CanBreakOut = false;
 	b_HasTriggerHeavyAttack = false;
+
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(160.0f, 50.0f, -30.0f), FVector(160.0f, -40.0f, 90.0f), 80.0f));
 }
 
 

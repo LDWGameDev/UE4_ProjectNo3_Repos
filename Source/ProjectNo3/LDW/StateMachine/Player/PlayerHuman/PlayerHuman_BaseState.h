@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "../../BaseState.h"
-#include "../../../System/System_CombatContainer.h"
+#include "../../../System/CombatSystem/System_CombatContainer.h"
 #include "../../../Character/Character_PlayerHuman.h"
 #include "PlayerHuman_BaseState.generated.h"
 
@@ -25,6 +25,9 @@ public:
 protected:
 	UPROPERTY()
 		ACharacter_PlayerHuman* m_CharPlayerHuman_Owner;
+
+	TArray<AActor*> m_HasGotHitActors;
+
 private:
 
 
@@ -39,18 +42,22 @@ public:
 	
 	// Called at BeginPlay() of Character_PlayerHuman after create the instance state of this class
 	void InitState_PlayerHuman(ACharacter_PlayerHuman* p_CharOwner, UStateMachineComponent* p_StateMachineComponent);
-	//
+	
 	// Binds input and other delegate event of Character_PlayerHuman
 	// Called when Character_PlayerHuman instance get possessed
 	virtual void BindInputHandlingFunctions(AController* p_PlayerController);
-	//
+	
 	// Unbinds input and other delegate event of Character_PlayerHuman
 	// Called when Character_PlayerHuman instance get dispossessed
 	virtual void UnBindInputHandlingFunctions();
 
+
 protected:
+	// Set arm length and socket offset of CameraFollow_01
 	void SetCameraFollow_01(const float& p_AdditionArmLength, const FVector& p_SocketOffset, float p_BlendTime, float p_ArmLength_AddFwd = -20.0f, float p_ArmLength_AddBwd = 80.0f,
 											FVector p_SocketOffset_AddFwd = FVector(0.0f, -40.0f, 0.0f), FVector p_SocketOffset_AddBwd = FVector(0.0f, -40.0f, 0.0f));
+
+	void CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState);
 
 private:
 };

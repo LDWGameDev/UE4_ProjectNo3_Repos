@@ -72,6 +72,12 @@ public:
 		void BroadCastDelegate_EndAttack_01();
 	UFUNCTION(BlueprintCallable, Category = "Call Function")
 		void BroadCastDelegate_EndAttack_02();
+	UFUNCTION(BlueprintCallable, Category = "Call Function")
+		void BroadCastDelegate_TriggerAttack_01();
+	UFUNCTION(BlueprintCallable, Category = "Call Function")
+		void BroadCastDelegate_TriggerAttack_02();
+	UFUNCTION(BlueprintCallable, Category = "Call Function")
+		void BroadCastDelegate_TriggerAttack_03();
 
 	void CheckForCurrentState();
 

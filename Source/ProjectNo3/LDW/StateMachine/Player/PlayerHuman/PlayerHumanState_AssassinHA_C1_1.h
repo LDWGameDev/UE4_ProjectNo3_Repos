@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerHuman_BaseState.h"
+#include "../../../System/CombatSystem/System_CombatContainer.h"
 #include "../../../Interface/Interface_PlayerControllerInput.h"
 #include "PlayerHumanState_AssassinHA_C1_1.generated.h"
 
@@ -30,6 +31,10 @@ private:
 	const float c_AdditionArmLength_2 = 100.0f;
 	const FVector c_SocketOffset = FVector(0.0f, 60.0f, -60.0);
 	const FVector c_SocketOffset_2 = FVector(0.0f, 60.0f, 40.0f);
+
+	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_01;
+	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_02;
+	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_03;
 
 	FDelegate1_MovementSignature* m_MoveForward_DelegateREF;
 	FDelegate1_MovementSignature* m_MoveRight_DelegateREF;

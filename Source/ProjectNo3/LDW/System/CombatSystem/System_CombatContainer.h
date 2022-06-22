@@ -51,6 +51,7 @@ struct FStruct_SphereTrace_Offset : public FTableRowBase
 	GENERATED_BODY()
 
 	FORCEINLINE FStruct_SphereTrace_Offset();
+	FORCEINLINE FStruct_SphereTrace_Offset(const FVector& p_StartOffset, const FVector& p_EndOffset, float p_Radius);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector m_StartOffsetPosition;
@@ -61,6 +62,28 @@ struct FStruct_SphereTrace_Offset : public FTableRowBase
 };
 
 FORCEINLINE FStruct_SphereTrace_Offset::FStruct_SphereTrace_Offset() : m_StartOffsetPosition(FVector()), m_EndOffsetPosition(FVector()), m_Radius(0.0f) {}
+FORCEINLINE FStruct_SphereTrace_Offset::FStruct_SphereTrace_Offset(const FVector& p_StartOffset, const FVector& p_EndOffset, float p_Radius) : m_StartOffsetPosition(p_StartOffset), m_EndOffsetPosition(p_EndOffset), m_Radius(p_Radius) {}
+
+
+
+USTRUCT(BlueprintType)
+struct FStruct_SphereOverlap_Offset : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FORCEINLINE FStruct_SphereOverlap_Offset();
+	FORCEINLINE FStruct_SphereOverlap_Offset(const FVector& p_OffsetPosition, float p_Radius);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FVector m_OffsetPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float m_Radius;
+};
+
+FORCEINLINE FStruct_SphereOverlap_Offset::FStruct_SphereOverlap_Offset() : m_OffsetPosition(FVector()), m_Radius(0.0f) {}
+
+FORCEINLINE FStruct_SphereOverlap_Offset::FStruct_SphereOverlap_Offset(const FVector& p_OffsetPosition, float p_Radius) : m_OffsetPosition(p_OffsetPosition), m_Radius(p_Radius) {}
+
 
 
 
@@ -74,7 +97,7 @@ struct FStruct_AttackStateDefinition : public FTableRowBase
 	GENERATED_BODY()
 
 	FORCEINLINE FStruct_AttackStateDefinition();
-	FORCEINLINE FStruct_AttackStateDefinition(EHitType p_HitType, EDirectionAttack6Ways p_AttackDirection, bool p_DoControlPosition, FVector& p_ControlPositionOffset, float p_ControlPositionTime);
+	FORCEINLINE FStruct_AttackStateDefinition(EHitType p_HitType, EDirectionAttack6Ways p_AttackDirection, bool p_DoControlPosition, const FVector& p_ControlPositionOffset, float p_ControlPositionTime);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EHitType m_HitType;
@@ -90,7 +113,7 @@ struct FStruct_AttackStateDefinition : public FTableRowBase
 
 FORCEINLINE FStruct_AttackStateDefinition::FStruct_AttackStateDefinition() : m_HitType(EHitType::LightAttack), m_AttackDirection(EDirectionAttack6Ways::Front), b_DoControlPostion(false), m_ControlPositionOffset(FVector()), m_ControlPositionTime(0.0f) {}
 
-FORCEINLINE FStruct_AttackStateDefinition::FStruct_AttackStateDefinition(EHitType p_HitType, EDirectionAttack6Ways p_AttackDirection, bool p_DoControlPosition, FVector& p_ControlPositionOffset, float p_ControlPositionTime) :
+FORCEINLINE FStruct_AttackStateDefinition::FStruct_AttackStateDefinition(EHitType p_HitType, EDirectionAttack6Ways p_AttackDirection, bool p_DoControlPosition, const FVector& p_ControlPositionOffset, float p_ControlPositionTime) :
 	m_HitType(p_HitType), m_AttackDirection(p_AttackDirection), b_DoControlPostion(p_DoControlPosition), m_ControlPositionOffset(p_ControlPositionOffset), m_ControlPositionTime(p_ControlPositionTime) {}
 
 
@@ -103,23 +126,24 @@ struct FStruct_AttackDefinition
 	GENERATED_BODY()
 
 	FORCEINLINE FStruct_AttackDefinition();
-	FORCEINLINE FStruct_AttackDefinition(AActor* p_Attacker, AActor* p_GetHitActor, FStruct_AttackStateDefinition* p_AttackerAttackState);
+	FORCEINLINE FStruct_AttackDefinition(AActor* p_Attacker, AActor* p_GetHitActor, FStruct_AttackStateDefinition* p_AttackerAttackState, FHitResult* p_HitResult);
 
 	AActor* m_AttackerActor;
 	AActor* m_GetHitActor;
-	FStruct_AttackStateDefinition* m_AttackerAttackState;
+	FStruct_AttackStateDefinition* m_AttackerAttackStateREF;
+	FHitResult* m_HitResultREF;
 
 	FORCEINLINE bool CheckValid();
 	// Some kinds of stats: attacker stats, gethit stats, calculated damage
 };
 
-FORCEINLINE FStruct_AttackDefinition::FStruct_AttackDefinition() : m_AttackerActor(nullptr), m_GetHitActor(nullptr), m_AttackerAttackState(nullptr) {}
+FORCEINLINE FStruct_AttackDefinition::FStruct_AttackDefinition() : m_AttackerActor(nullptr), m_GetHitActor(nullptr), m_AttackerAttackStateREF(nullptr), m_HitResultREF(nullptr) {}
 
-FORCEINLINE FStruct_AttackDefinition::FStruct_AttackDefinition(AActor* p_Attacker, AActor* p_GetHitActor, FStruct_AttackStateDefinition* p_AttackerAttackState) :
-	m_AttackerActor(p_Attacker), m_GetHitActor(p_GetHitActor), m_AttackerAttackState(p_AttackerAttackState) {}
+FORCEINLINE FStruct_AttackDefinition::FStruct_AttackDefinition(AActor* p_Attacker, AActor* p_GetHitActor, FStruct_AttackStateDefinition* p_AttackerAttackState, FHitResult* p_HitResult) :
+	m_AttackerActor(p_Attacker), m_GetHitActor(p_GetHitActor), m_AttackerAttackStateREF(p_AttackerAttackState), m_HitResultREF(p_HitResult) {}
 
 FORCEINLINE bool FStruct_AttackDefinition::CheckValid()
 {
-	if (m_AttackerActor == nullptr || m_GetHitActor == nullptr || m_AttackerAttackState == nullptr) return false;
+	if (m_AttackerActor == nullptr || m_GetHitActor == nullptr || m_AttackerAttackStateREF == nullptr || m_HitResultREF == nullptr) return false;
 	return true;
 }

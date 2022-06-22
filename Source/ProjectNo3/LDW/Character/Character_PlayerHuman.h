@@ -68,11 +68,12 @@ class PROJECTNO3_API ACharacter_PlayerHuman : public ACharacter
  * Properties
  */
 public:
-	UPROPERTY(EditDefaultsOnly)
+	// Camera system blueprint
+	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
 		TSubclassOf<AActor_CameraSystem> m_Subclass_CameraSystemActor;
 
-	UPROPERTY()
-		UAnimInstance_PlayerHuman* m_AnimInstance_PlayerHuman_REF;
+	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+		TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjectTypes_AttackHitboxTrace;
 		
 	// Ease in and out alpha (0 - 1) curve
 	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
@@ -91,6 +92,9 @@ public:
 		UDataTable* m_DataTable_Montages;
 	
 
+
+	UPROPERTY()
+		UAnimInstance_PlayerHuman* m_AnimInstance_PlayerHuman_REF;
 
 	// States of this character
 	UPROPERTY()
@@ -155,6 +159,10 @@ public:
 	FDelegate_ActionSignature m_Delegate_AnimNotify_03;
 	FDelegate_ActionSignature m_Delegate_EndAttack_01;
 	FDelegate_ActionSignature m_Delegate_EndAttack_02;
+	FDelegate_ActionSignature m_Delegate_TriggerAttack_01;
+	FDelegate_ActionSignature m_Delegate_TriggerAttack_02;
+	FDelegate_ActionSignature m_Delegate_TriggerAttack_03;
+
 
 	bool b_IsBuffingWeapon_01 = false;
 
@@ -339,5 +347,5 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
-		void TestFunction(FName p_ActorSequenceID);
+		void TestFunction(FVector p_StartOffset, FVector p_EndOffset, float p_Radius);
 };

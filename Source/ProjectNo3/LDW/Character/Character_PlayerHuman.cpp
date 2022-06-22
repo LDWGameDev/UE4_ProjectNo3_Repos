@@ -8,6 +8,7 @@
 
 #include "../StateMachine/Player/ContainerPlayerStates.h"
 #include "../Library/Library_CustomMath.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 
@@ -618,7 +619,18 @@ void ACharacter_PlayerHuman::HandleDelegate_ReturnViewTarget()
 
 
 
-void ACharacter_PlayerHuman::TestFunction(FName p_ActorSequenceID)
+void ACharacter_PlayerHuman::TestFunction(FVector p_StartOffset, FVector p_EndOffset, float p_Radius)
 {
+	FVector StartPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(this, p_StartOffset);
+	FVector EndPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(this, p_EndOffset);
+	TArray<AActor*> ActorToIgnore;
+	ActorToIgnore.Add(this);
+	TArray<FHitResult> HitResults;
+	bool TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(this, StartPosition, EndPosition, p_Radius, m_ObjectTypes_AttackHitboxTrace,
+		false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.5f);
+	if (TraceResult)
+	{
 
+	}
 }
+

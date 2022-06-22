@@ -98,3 +98,8 @@ void AActor_TestActor::TestTimerFunction()
 	float a = Timespan.GetTotalMilliseconds();
 	UE_LOG(LogTemp, Warning, TEXT("Actor_TestActor - Timespan: %f"), a);
 }
+
+void AActor_TestActor::TakeHit(const FStruct_AttackDefinition& p_AttackDefinition)
+{
+	UE_LOG(LogTemp, Warning, TEXT("TestActor - TakeHit() from Interface_Attackable"));
+}

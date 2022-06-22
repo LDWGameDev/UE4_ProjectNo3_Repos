@@ -2,6 +2,7 @@
 
 
 #include "PlayerHumanState_AssassinLA_C1_2.h"
+#include "PlayerHumanState_AssassinLA_C1_1.h"
 
 
 UPlayerHumanState_AssassinLA_C1_2::UPlayerHumanState_AssassinLA_C1_2()
@@ -11,6 +12,21 @@ UPlayerHumanState_AssassinLA_C1_2::UPlayerHumanState_AssassinLA_C1_2()
 	m_CooldownTime = c_CooldownTime;
 	b_HasTriggerLightAttack = false;
 	b_CanBreakOut = false;
+
+	m_Hitboxes_01.Reserve(3);
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(150.0f, 70.0f, -30.0f), FVector(150.0f, 70.0f, -50.0f), 60.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(190.0f, -10.0f, -10.0f), FVector(190.0f, -10.0f, -30.0f), 60.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(170.0f, -90.0f, 10.0f), FVector(170.0f, -90.0f, -10.0f), 60.0f));
+
+	m_Hitboxes_02.Reserve(3);
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(120.0f, -90.0f, -40.0f), FVector(120.0f, -90.0f, -60.0f), 60.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(170.0f, -10.0f, -20.0f), FVector(170.0f, -10.0f, -40.0f), 60.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(150.0f, 70.0f, 10.0f), FVector(150.0f, 70.0f, -10.0f), 60.0f));
+
+	m_Hitboxes_03.Reserve(3);
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(170.0f, 70.0f, 10.0f), FVector(170.0f, 70.0f, -10.0f), 60.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(190.0f, -10.0f, -20.0f), FVector(190.0f, -10.0f, -40.0f), 60.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(140.0f, -90.0f, -40.0f), FVector(140.0f, -90.0f, -60.0f), 60.0f));
 }
 
 
@@ -75,6 +91,9 @@ void UPlayerHumanState_AssassinLA_C1_2::BindInputHandlingFunctions(AController* 
 	m_HeavyAttack_DelegateREF = IPlayerInput->GetDelegate_HeavyAttackStart();
 	m_EndAttack_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndAttack_02);
 	m_AnimNotify_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_AnimNotify_01);
+	m_TriggerAttack_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_01);
+	m_TriggerAttack_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_02);
+	m_TriggerAttack_03_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_03);
 
 	if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_MoveForward);
 	if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_MoveRight);
@@ -82,7 +101,9 @@ void UPlayerHumanState_AssassinLA_C1_2::BindInputHandlingFunctions(AController* 
 	if (m_HeavyAttack_DelegateREF != nullptr) m_HeavyAttack_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_HeavyAttackStart);
 	if (m_EndAttack_02_DelegateREF != nullptr) m_EndAttack_02_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_EndAttack_02);
 	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_AnimNotify_01);
-
+	if (m_TriggerAttack_01_DelegateREF != nullptr) m_TriggerAttack_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_TriggerAttack_01);
+	if (m_TriggerAttack_02_DelegateREF != nullptr) m_TriggerAttack_02_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_TriggerAttack_02);
+	if (m_TriggerAttack_03_DelegateREF != nullptr) m_TriggerAttack_03_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinLA_C1_2::HandleAction_TriggerAttack_03);
 }
 
 void UPlayerHumanState_AssassinLA_C1_2::UnBindInputHandlingFunctions()
@@ -94,6 +115,9 @@ void UPlayerHumanState_AssassinLA_C1_2::UnBindInputHandlingFunctions()
 	if (m_HeavyAttack_DelegateREF != nullptr) m_HeavyAttack_DelegateREF->RemoveAll(this);
 	if (m_EndAttack_02_DelegateREF != nullptr) m_EndAttack_02_DelegateREF->RemoveAll(this);
 	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->RemoveAll(this);
+	if (m_TriggerAttack_01_DelegateREF != nullptr) m_TriggerAttack_01_DelegateREF->RemoveAll(this);
+	if (m_TriggerAttack_02_DelegateREF != nullptr) m_TriggerAttack_02_DelegateREF->RemoveAll(this);
+	if (m_TriggerAttack_03_DelegateREF != nullptr) m_TriggerAttack_03_DelegateREF->RemoveAll(this);
 
 	m_MoveForward_DelegateREF = nullptr;
 	m_MoveRight_DelegateREF = nullptr;
@@ -101,6 +125,9 @@ void UPlayerHumanState_AssassinLA_C1_2::UnBindInputHandlingFunctions()
 	m_HeavyAttack_DelegateREF = nullptr;
 	m_EndAttack_02_DelegateREF = nullptr;
 	m_AnimNotify_01_DelegateREF = nullptr;
+	m_TriggerAttack_01_DelegateREF = nullptr;
+	m_TriggerAttack_02_DelegateREF = nullptr;
+	m_TriggerAttack_03_DelegateREF = nullptr;
 }
 
 
@@ -152,4 +179,22 @@ void UPlayerHumanState_AssassinLA_C1_2::HandleAction_AnimNotify_01()
 {
 	if (!b_IsInState) return;
 	b_CanBreakOut = true;
+}
+
+void UPlayerHumanState_AssassinLA_C1_2::HandleAction_TriggerAttack_01()
+{
+	if (!b_IsInState) return;
+	CheckForHittingTarget(m_Hitboxes_01, m_AttackStateDefinition_01);
+}
+
+void UPlayerHumanState_AssassinLA_C1_2::HandleAction_TriggerAttack_02()
+{
+	if (!b_IsInState) return;
+	CheckForHittingTarget(m_Hitboxes_02, m_AttackStateDefinition_01);
+}
+
+void UPlayerHumanState_AssassinLA_C1_2::HandleAction_TriggerAttack_03()
+{
+	if (!b_IsInState) return;
+	CheckForHittingTarget(m_Hitboxes_03, m_AttackStateDefinition_01);
 }

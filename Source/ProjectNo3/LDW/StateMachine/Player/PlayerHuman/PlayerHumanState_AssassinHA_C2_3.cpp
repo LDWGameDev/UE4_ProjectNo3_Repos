@@ -11,6 +11,8 @@ UPlayerHumanState_AssassinHA_C2_3::UPlayerHumanState_AssassinHA_C2_3()
 	m_StateID = TEXT("PlayerHumanState_AssassinHA_C2_3");
 	m_StateGameplayTag = FGameplayTag::RequestGameplayTag("StateMachine.PlayerState.Human.Action.HeavyAttack.AssassinHeavyAttack_Combo2_Phase3", false);
 	b_CanBreakOut = false;
+
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(60.0f, 0.0f, -20.0f), FVector(60.0f, 0.0f, -50.0f), 140.0f));
 }
 
 

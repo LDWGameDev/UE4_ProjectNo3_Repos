@@ -115,3 +115,27 @@ void UAnimInstance_PlayerHuman::CheckForCurrentState()
 		}
 	}
 }
+
+void UAnimInstance_PlayerHuman::BroadCastDelegate_TriggerAttack_01()
+{
+	if (m_CharacterPlayerHuman_OwnerCharacter != nullptr && m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_01.IsBound())
+	{
+		m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_01.Broadcast();
+	}
+}
+
+void UAnimInstance_PlayerHuman::BroadCastDelegate_TriggerAttack_02()
+{
+	if (m_CharacterPlayerHuman_OwnerCharacter != nullptr && m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_02.IsBound())
+	{
+		m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_02.Broadcast();
+	}
+}
+
+void UAnimInstance_PlayerHuman::BroadCastDelegate_TriggerAttack_03()
+{
+	if (m_CharacterPlayerHuman_OwnerCharacter != nullptr && m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_03.IsBound())
+	{
+		m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_03.Broadcast();
+	}
+}

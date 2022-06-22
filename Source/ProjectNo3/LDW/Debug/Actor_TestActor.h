@@ -6,17 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "TimerManager.h"
 #include "Misc/Timespan.h"
-
 #include "Components/TimelineComponent.h" 
 #include "Curves/CurveFloat.h"
 #include "../Item/Weapon/Struct_Weapon.h"
-
 #include "Object_TestObject.h"
+#include "../System/CombatSystem/Interface_Attackable.h"
 #include "Actor_TestActor.generated.h"
 
 
 UCLASS(BlueprintType)
-class PROJECTNO3_API AActor_TestActor : public AActor
+class PROJECTNO3_API AActor_TestActor : public AActor, public IInterface_Attackable
 {
 	GENERATED_BODY()
 	
@@ -40,6 +39,8 @@ public:
 		void TimelineProgress_01(float p_Value);
 	UFUNCTION()
 		void TimelineEventEvent();
+
+	virtual void TakeHit(const FStruct_AttackDefinition& p_AttackDefinition) override;
 
 private:
 	// First 10 elements will be allocated in stack memory,

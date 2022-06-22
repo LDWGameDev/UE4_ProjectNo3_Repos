@@ -12,7 +12,7 @@ UPlayerHumanState_AssassinHA_C3_2::UPlayerHumanState_AssassinHA_C3_2()
 	m_StateID = TEXT("PlayerHumanState_AssassinHA_C3_2");
 	m_StateGameplayTag = FGameplayTag::RequestGameplayTag("StateMachine.PlayerState.Human.Action.HeavyAttack.AssassinHeavyAttack_Combo3_Phase2", false);
 	b_CanBreakOut = false;
-	b_CameraSequenceValid = false;
+	b_CameraSequenceValid = true;
 }
 
 

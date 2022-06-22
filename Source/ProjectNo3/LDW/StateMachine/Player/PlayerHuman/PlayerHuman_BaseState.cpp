@@ -4,6 +4,9 @@
 #include "PlayerHuman_BaseState.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "../../../System/CombatSystem/Interface_Attackable.h"
+#include "../../../System/CombatSystem/System_CombatContainer.h"
 #include "../../../Library/Library_CustomMath.h"
 
 UPlayerHuman_BaseState::UPlayerHuman_BaseState() 
@@ -79,4 +82,34 @@ void UPlayerHuman_BaseState::SetCameraFollow_01(const float& p_AdditionArmLength
 	}
 	if (DirectionAngle > 0.0f) SocketOffset.Y *= -1.0f;
 	m_CharPlayerHuman_Owner->SetCameraFollow_01(ArmLength, SocketOffset, p_BlendTime);
+}
+
+void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState)
+{
+	m_HasGotHitActors.Empty();
+	for (FStruct_SphereTrace_Offset& SphereTrace : p_Hitboxes)
+	{
+		FVector StartPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(m_CharPlayerHuman_Owner, SphereTrace.m_StartOffsetPosition);
+		FVector EndPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(m_CharPlayerHuman_Owner, SphereTrace.m_EndOffsetPosition);
+		TArray<AActor*> ActorToIgnore;
+		ActorToIgnore.Add(m_CharPlayerHuman_Owner);
+		TArray<FHitResult> HitResults;
+		bool TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
+			false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+		if (TraceResult)
+		{
+			for (FHitResult& HitResult : HitResults)
+			{
+				IInterface_Attackable* IAttackable = Cast<IInterface_Attackable>(HitResult.GetActor());
+				if (IAttackable != nullptr && !m_HasGotHitActors.Contains(HitResult.GetActor()))
+				{
+					// Get stats component
+					// Create FStruct_AttackDefinition
+					FStruct_AttackDefinition AttackDefinition(m_CharPlayerHuman_Owner, HitResult.GetActor(), &p_AttackState, &HitResult);
+					IAttackable->TakeHit(AttackDefinition);
+					m_HasGotHitActors.Add(HitResult.GetActor());
+				}
+			}
+		}
+	}
 }
