@@ -8,6 +8,7 @@ public class ProjectNo3 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "GameplayTags", "ControlRig", "ActorSequence"});
+
 		PublicIncludePaths.AddRange(new string[] { "ProjectNo3/LDW"});
     }
 }

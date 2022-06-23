@@ -6,6 +6,7 @@
 #include "PlayerHuman_BaseState.h"
 #include "PlayerHumanState_AssassinEquip.generated.h"
 
+
 /**
  * 
  */

@@ -12,13 +12,13 @@
 #include "Engine/DataTable.h"
 #include "ActorSequenceComponent.h"
 
-#include "../AnimInstance/AnimInstance_PlayerHuman.h"
-#include "../StateMachine/StateMachineComponent.h"
-#include "../Interface/Interface_PlayerControllerInput.h"
-#include "../Item/Weapon/Struct_Weapon.h"
-#include "../Component/Component_StaticCameraManager.h"
-#include "../Actor/Actor_CameraSystem.h"
-#include "Struct_MontageToPlay.h"
+#include "Actor/Actor_CameraSystem.h"
+#include "Character/Struct_MontageToPlay.h"
+#include "Character/Player/AnimInstance_PlayerHuman.h"
+#include "Item/Weapon/Struct_Weapon.h"
+#include "PlayerController/Interface_PlayerControllerInput.h"
+#include "StateMachine/StateMachineComponent.h"
+
 #include "Character_PlayerHuman.generated.h"
 
 
@@ -273,8 +273,6 @@ protected:
 
 private:
 	// Components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
-		UComponent_StaticCameraManager* m_StaticCameraManager_01;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
 		UStateMachineComponent* m_StateMachine_01;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))

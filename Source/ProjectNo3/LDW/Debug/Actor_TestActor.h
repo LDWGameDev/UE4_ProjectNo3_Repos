@@ -8,9 +8,9 @@
 #include "Misc/Timespan.h"
 #include "Components/TimelineComponent.h" 
 #include "Curves/CurveFloat.h"
-#include "../Item/Weapon/Struct_Weapon.h"
+#include "Item/Weapon/Struct_Weapon.h"
 #include "Object_TestObject.h"
-#include "../System/CombatSystem/Interface_Attackable.h"
+#include "System/CombatSystem/Interface_Attackable.h"
 #include "Actor_TestActor.generated.h"
 
 

@@ -5,9 +5,10 @@
 #include "GameplayTagContainer.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "../../../System/CombatSystem/Interface_Attackable.h"
-#include "../../../System/CombatSystem/System_CombatContainer.h"
-#include "../../../Library/Library_CustomMath.h"
+
+#include "Library/Library_CustomMath.h"
+#include "System/CombatSystem/Interface_Attackable.h"
+#include "System/CombatSystem/System_CombatContainer.h"
 
 UPlayerHuman_BaseState::UPlayerHuman_BaseState() 
 {

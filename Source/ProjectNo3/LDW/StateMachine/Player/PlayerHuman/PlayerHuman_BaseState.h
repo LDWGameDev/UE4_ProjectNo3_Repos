@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "../../BaseState.h"
-#include "../../../System/CombatSystem/System_CombatContainer.h"
-#include "../../../Character/Character_PlayerHuman.h"
+#include "StateMachine/BaseState.h"
+#include "System/CombatSystem/System_CombatContainer.h"
+#include "Character/Player/Character_PlayerHuman.h"
+#include "PlayerController/Interface_PlayerControllerInput.h"
 #include "PlayerHuman_BaseState.generated.h"
 
 /**

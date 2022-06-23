@@ -6,8 +6,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 
-#include "../StateMachine/Player/ContainerPlayerStates.h"
-#include "../Library/Library_CustomMath.h"
+#include "StateMachine/Player/ContainerPlayerStates.h"
+#include "Library/Library_CustomMath.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 

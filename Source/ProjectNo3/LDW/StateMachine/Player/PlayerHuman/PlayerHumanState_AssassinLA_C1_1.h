@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "PlayerHuman_BaseState.h"
-#include "../../../Interface/Interface_PlayerControllerInput.h"
 #include "PlayerHumanState_AssassinLA_C1_1.generated.h"
 
 /**

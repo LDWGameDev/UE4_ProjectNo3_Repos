@@ -3,8 +3,8 @@
 
 #include "PlayerHumanState_AssassinLA_C1_1.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "../../../Library/Library_CustomMath.h"
-#include "../../../System/CombatSystem/Interface_Attackable.h"
+#include "Library/Library_CustomMath.h"
+#include "System/CombatSystem/Interface_Attackable.h"
 
 
 UPlayerHumanState_AssassinLA_C1_1::UPlayerHumanState_AssassinLA_C1_1()

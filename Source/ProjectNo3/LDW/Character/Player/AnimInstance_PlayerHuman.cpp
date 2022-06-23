@@ -3,7 +3,7 @@
 
 #include "AnimInstance_PlayerHuman.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "../Character/Character_PlayerHuman.h"
+#include "Character/Player/Character_PlayerHuman.h"
 
 
 /**
