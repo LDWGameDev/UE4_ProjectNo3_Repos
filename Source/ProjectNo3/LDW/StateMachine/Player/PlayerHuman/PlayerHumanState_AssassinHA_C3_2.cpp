@@ -13,6 +13,27 @@ UPlayerHumanState_AssassinHA_C3_2::UPlayerHumanState_AssassinHA_C3_2()
 	m_StateGameplayTag = FGameplayTag::RequestGameplayTag("StateMachine.PlayerState.Human.Action.HeavyAttack.AssassinHeavyAttack_Combo3_Phase2", false);
 	b_CanBreakOut = false;
 	b_CameraSequenceValid = true;
+
+	m_Hitboxes_01.Reserve(2);
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(150.0f, -50.0f, -10.0f), FVector(150.0f, -50.0f, -30.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(150.0f, 50.0f, -10.0f), FVector(150.0f, 50.0f, -30.0f), 80.0f));
+
+	m_Hitboxes_02.Reserve(3);
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(-150.0f, 50.0f, -10.0f), FVector(-150.0f, 50.0f, -30.0f), 80.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(-180.0f, -50.0f, -10.0f), FVector(-180.0f, -50.0f, -30.0f), 80.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(-100.0f, -160.0f, -10.0f), FVector(-100.0f, -160.0f, -30.0f), 80.0f));
+
+	m_Hitboxes_03.Reserve(3);
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(90.0f, -150.0f, -10.0f), FVector(90.0f, -150.0f, -30.0f), 80.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(0.0f, -200.0f, -10.0f), FVector(0.0f, -200.0f, -30.0f), 80.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(-100.0f, -140.0f, -10.0f), FVector(-100.0f, -140.0f, -30.0f), 80.0f));
+
+	m_Hitboxes_04.Reserve(4);
+	m_Hitboxes_04.Add(FStruct_SphereTrace_Offset(FVector(0.0f, 190.0f, 0.0f), FVector(0.0f, 190.0f, -30.0f), 80.0f));
+	m_Hitboxes_04.Add(FStruct_SphereTrace_Offset(FVector(-100.0f, 190.0f, 0.0f), FVector(-100.0f, 190.0f, -30.0f), 80.0f));
+	m_Hitboxes_04.Add(FStruct_SphereTrace_Offset(FVector(-200.0f, 120.0f, 0.0f), FVector(-200.0f, 120.0f, -30.0f), 80.0f));
+
+	m_Hitboxes_05.Add(FStruct_SphereTrace_Offset(FVector(-200.0f, 120.0f, 0.0f), FVector(-200.0f, 120.0f, -30.0f), 80.0f));
 }
 
 

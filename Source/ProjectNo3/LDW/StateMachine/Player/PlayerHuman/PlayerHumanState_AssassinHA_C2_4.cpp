@@ -10,6 +10,16 @@ UPlayerHumanState_AssassinHA_C2_4::UPlayerHumanState_AssassinHA_C2_4()
 	m_StateGameplayTag = FGameplayTag::RequestGameplayTag("StateMachine.PlayerState.Human.Action.HeavyAttack.AssassinHeavyAttack_Combo2_Phase4", false);
 	b_CanBreakOut = false;
 	b_CameraSequenceValid = true;
+
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(140.0f, 0.0f, -20.0f), FVector(140.0f, 0.0f, -40.0f), 120.0f));
+
+	m_Hitboxes_02.Reserve(6);
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(50.0f, -120.0f, -10.0f), FVector(50.0f, -120.0f, -30.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(140.0f, -90.0f, -10.0f), FVector(140.0f, -90.0f, -30.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(200.0f, -10.0f, -10.0f), FVector(200.0f, -10.0f, -30.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(180.0f, 90.0f, 0.0f), FVector(180.0f, 90.0f, -20.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(130.0f, 160.0f, 0.0f), FVector(130.0f, 160.0f, -20.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(40.0f, 210.0f, 0.0f), FVector(40.0f, 210.0f, -20.0f), 80.0f));
 }
 
 

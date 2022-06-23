@@ -21,6 +21,8 @@ UPlayerHumanState_AssassinHA_C1_1::UPlayerHumanState_AssassinHA_C1_1()
 	m_Hitboxes_02.Reserve(2);
 	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(120.0, -30.0f, 20.0f), FVector(120.0f, -30.0f, -100.0f), 60.0f));
 	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(120.0, 30.0f, 20.0f), FVector(120.0f, 30.0f, -100.0f), 60.0f));
+
+
 }
 
 
