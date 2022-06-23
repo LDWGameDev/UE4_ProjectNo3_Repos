@@ -69,26 +69,37 @@ class PROJECTNO3_API ACharacter_PlayerHuman : public ACharacter
  */
 public:
 	// Camera system blueprint
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Camera System")
 		TSubclassOf<AActor_CameraSystem> m_Subclass_CameraSystemActor;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+
+	// ObjectType to check if hitboxes hit or not
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
 		TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjectTypes_AttackHitboxTrace;
+
+	// ObjectType to check if actor can be targeted to attack or not
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
+		TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjectTypes_ClosetTargetToAttack;
+
+	// TagContainer contains gameplay tags to check if actor can be targeted to attack or not
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
+		FGameplayTagContainer m_TagContainer_ClosetTargetToAttack;
 		
+
 	// Ease in and out alpha (0 - 1) curve
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
 		UCurveFloat* m_CurveFloat_EaseInOutAlpha;
 	// Linear alpha (0 - 1) curve
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
 		UCurveFloat* m_CurveFloat_LinearAlpha;
 	// Hard in ease out alpha (0 - 1) curve
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
 		UCurveFloat* m_CurveFloat_HardInEaseOutAlpha;
 	// DataTable contains all weapons
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
 		UDataTable* m_DataTable_Weapons;
 	// DataTable contains all montages
-	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
 		UDataTable* m_DataTable_Montages;
 	
 
@@ -232,7 +243,6 @@ public:
 	UStateMachineComponent* GetStateMachine();
 
 
-
 	// Movement this character using movement input
 	void MoveCharacter(float p_MoveForwardValue, float p_MoveRightValue);
 	
@@ -265,6 +275,12 @@ public:
 	
 	// Set view to camera sequence of m_CameraSystemActor
 	void SetViewToCameraSequence(const FName& p_SequenceID, bool p_ResetCameraSystemTransform = true);
+
+	// Find closet actor that is implemented Interface_GameplayTagControl and has one of the tags in p_TargetHasTag
+	AActor* FindClosetActor_SphereCheck(const FVector& p_OffsetPositionToCheck, float p_RadiusToCheck, const TArray<TEnumAsByte<EObjectTypeQuery>>& p_ObjectTypesToCheck, const FGameplayTagContainer& p_TagsToCheck);
+
+	// Find closet actor to attack
+	AActor* FindClosetTargetToAttack(const FVector& p_OffsetPositionToCheck, float p_RadiusToCheck);
 
 
 protected:
@@ -339,8 +355,6 @@ private:
 
 	// Bind to FDelegate_ReturnViewTargetSignature of m_CameraSystemActor (Actor_CameraSystem type)
 	void HandleDelegate_ReturnViewTarget();
-
-
 
 
 public:

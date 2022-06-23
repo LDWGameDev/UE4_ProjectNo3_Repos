@@ -2,13 +2,16 @@
 
 #include "Character_PlayerHuman.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "TimerManager.h"
 
-#include "StateMachine/Player/ContainerPlayerStates.h"
 #include "Library/Library_CustomMath.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "StateMachine/Player/ContainerPlayerStates.h"
+#include "System/InteractingSystem/Interface_GameplayTagControl.h"
+
+#include "DrawDebugHelpers.h"
 
 
 
@@ -284,6 +287,44 @@ void ACharacter_PlayerHuman::SetViewToCameraSequence(const FName& p_SequenceID, 
 		m_CameraSystemActor->SetActorTransform(CharacterTransform);
 	}
 	m_CameraSystemActor->SetViewTargetToActorSequence(p_SequenceID, Cast<APlayerController>(Controller));
+}
+
+AActor* ACharacter_PlayerHuman::FindClosetActor_SphereCheck(const FVector& p_OffsetPositionToCheck, float p_RadiusToCheck, const TArray<TEnumAsByte<EObjectTypeQuery>>& p_ObjectTypesToCheck, const FGameplayTagContainer& p_TagsToCheck)
+{
+	if (!p_TagsToCheck.IsValid()) return nullptr;
+	
+	FVector CheckPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(this, p_OffsetPositionToCheck);
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	TArray<AActor*> OutActors;
+	bool OverlapResult = UKismetSystemLibrary::SphereOverlapActors(this, CheckPosition, p_RadiusToCheck, p_ObjectTypesToCheck, AActor::StaticClass(), ActorsToIgnore, OutActors);
+
+	if (!OverlapResult) return nullptr;
+
+	// Find closet actor in OutActors that has any tags match p_TagsToCheck
+	AActor* ClosetActor = nullptr;
+	float ClosetDistance = TNumericLimits<float>::Max();
+	for (AActor* OutActor : OutActors)
+	{
+		IInterface_GameplayTagControl* ITagControl = Cast<IInterface_GameplayTagControl>(OutActor);
+		if (OutActor != nullptr && ITagControl != nullptr) 
+		{
+			FGameplayTagContainer ActorTagContainer = ITagControl->GetTagContainer();
+			float DistanceToThisChar = OutActor->GetDistanceTo(this);
+			if (DistanceToThisChar < ClosetDistance && ActorTagContainer.HasAny(p_TagsToCheck))
+			{
+				ClosetActor = OutActor;
+				ClosetDistance = DistanceToThisChar;
+			}
+		}
+	}
+
+	return ClosetActor;
+}
+
+AActor* ACharacter_PlayerHuman::FindClosetTargetToAttack(const FVector& p_OffsetPositionToCheck, float p_RadiusToCheck)
+{
+	return FindClosetActor_SphereCheck(p_OffsetPositionToCheck, p_RadiusToCheck, m_ObjectTypes_ClosetTargetToAttack, m_TagContainer_ClosetTargetToAttack);
 }
 
 

@@ -10,6 +10,14 @@
 #include "System/CombatSystem/Interface_Attackable.h"
 #include "System/CombatSystem/System_CombatContainer.h"
 
+#include "Library/Library_CustomMath.h"
+#include "DrawDebugHelpers.h"
+
+
+/**
+ * 
+ */
+
 UPlayerHuman_BaseState::UPlayerHuman_BaseState() 
 {
 
@@ -85,7 +93,7 @@ void UPlayerHuman_BaseState::SetCameraFollow_01(const float& p_AdditionArmLength
 	m_CharPlayerHuman_Owner->SetCameraFollow_01(ArmLength, SocketOffset, p_BlendTime);
 }
 
-void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState)
+void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState, bool p_DebugHitboxes)
 {
 	m_HasGotHitActors.Empty();
 	for (FStruct_SphereTrace_Offset& SphereTrace : p_Hitboxes)
@@ -95,8 +103,24 @@ void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Of
 		TArray<AActor*> ActorToIgnore;
 		ActorToIgnore.Add(m_CharPlayerHuman_Owner);
 		TArray<FHitResult> HitResults;
-		bool TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
-			false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+
+		/*bool TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
+			false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);*/
+		
+		// Debug, replace with above if not need to debug anymore
+		bool TraceResult = false;
+		if (p_DebugHitboxes)
+		{
+			UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
+				false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+		}
+		else 
+		{
+			UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
+				false, ActorToIgnore, EDrawDebugTrace::None, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+		}
+		//
+
 		if (TraceResult)
 		{
 			for (FHitResult& HitResult : HitResults)
@@ -112,5 +136,19 @@ void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Of
 				}
 			}
 		}
+	}
+}
+
+void UPlayerHuman_BaseState::RotateToClosetTarget(const FVector& p_CheckPositionOffset, float p_CheckRadius, float p_RotateTime)
+{
+	if (m_CharPlayerHuman_Owner == nullptr) return;
+	AActor* ClosetActor = m_CharPlayerHuman_Owner->FindClosetTargetToAttack(p_CheckPositionOffset, p_CheckRadius);
+	m_CharPlayerHuman_Owner->RotateToFaceTarget(ClosetActor, p_RotateTime);
+
+	bool DoDebug = false;
+	if (DoDebug)
+	{
+		FVector CheckPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(m_CharPlayerHuman_Owner, p_CheckPositionOffset);
+		DrawDebugSphere(m_CharPlayerHuman_Owner->GetWorld(), CheckPosition, p_CheckRadius, 12, FColor::Green, true, 2.0f, 2, 0.4f);
 	}
 }

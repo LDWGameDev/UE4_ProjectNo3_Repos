@@ -2,6 +2,9 @@
 
 
 #include "Character_EnemyBase.h"
+#include "System/CombatSystem/System_CombatContainer.h"
+
+
 
 ACharacter_EnemyBase::ACharacter_EnemyBase()
 {
@@ -9,11 +12,19 @@ ACharacter_EnemyBase::ACharacter_EnemyBase()
 
 }
 
+
+
+
+/**
+ * Override functions
+ */
+
 void ACharacter_EnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
+
 
 void ACharacter_EnemyBase::Tick(float DeltaTime)
 {
@@ -26,3 +37,21 @@ void ACharacter_EnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+
+
+
+/**
+ * Interface functions
+ */
+
+void ACharacter_EnemyBase::TakeHit(FStruct_AttackDefinition& p_AttackDefinition)
+{
+
+}
+
+const FGameplayTagContainer& ACharacter_EnemyBase::GetTagContainer()
+{
+	return m_TagContainer;
+}
+

@@ -14,19 +14,19 @@ UPlayerHumanState_AssassinLA_C1_2::UPlayerHumanState_AssassinLA_C1_2()
 	b_CanBreakOut = false;
 
 	m_Hitboxes_01.Reserve(3);
-	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(150.0f, 70.0f, -30.0f), FVector(150.0f, 70.0f, -50.0f), 60.0f));
-	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(190.0f, -10.0f, -10.0f), FVector(190.0f, -10.0f, -30.0f), 60.0f));
-	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(170.0f, -90.0f, 10.0f), FVector(170.0f, -90.0f, -10.0f), 60.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(130.0f, 70.0f, -30.0f), FVector(130.0f, 70.0f, -50.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(170.0f, -10.0f, -10.0f), FVector(170.0f, -10.0f, -30.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(150.0f, -90.0f, 10.0f), FVector(150.0f, -90.0f, -10.0f), 80.0f));
 
 	m_Hitboxes_02.Reserve(3);
-	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(120.0f, -90.0f, -40.0f), FVector(120.0f, -90.0f, -60.0f), 60.0f));
-	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(170.0f, -10.0f, -20.0f), FVector(170.0f, -10.0f, -40.0f), 60.0f));
-	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(150.0f, 70.0f, 10.0f), FVector(150.0f, 70.0f, -10.0f), 60.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(100.0f, -90.0f, -40.0f), FVector(100.0f, -90.0f, -60.0f), 80.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(150.0f, -10.0f, -20.0f), FVector(150.0f, -10.0f, -40.0f), 80.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(130.0f, 70.0f, 10.0f), FVector(130.0f, 70.0f, -10.0f), 80.0f));
 
 	m_Hitboxes_03.Reserve(3);
-	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(170.0f, 70.0f, 10.0f), FVector(170.0f, 70.0f, -10.0f), 60.0f));
-	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(190.0f, -10.0f, -20.0f), FVector(190.0f, -10.0f, -40.0f), 60.0f));
-	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(140.0f, -90.0f, -40.0f), FVector(140.0f, -90.0f, -60.0f), 60.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(150.0f, 70.0f, 10.0f), FVector(150.0f, 70.0f, -10.0f), 80.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(170.0f, -10.0f, -20.0f), FVector(170.0f, -10.0f, -40.0f), 80.0f));
+	m_Hitboxes_03.Add(FStruct_SphereTrace_Offset(FVector(120.0f, -90.0f, -40.0f), FVector(120.0f, -90.0f, -60.0f), 80.0f));
 }
 
 

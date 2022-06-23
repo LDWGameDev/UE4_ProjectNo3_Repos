@@ -39,9 +39,11 @@ private:
 	const float m_MinStateTime = 0.1f;
 
 
+
 /**
  * Functions
  */
+
 public:	
 	UStateMachineComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -51,13 +53,18 @@ public:
 
 	// Activate this component, init start state
 	void ActivateStateMachine(const FString& p_StartStateID);
+	
 	// Deactivate this component
 	void DeactivateStateMachine();
+
 	// Change current state to new state
 	void ChangeState(const FString& p_NewStateID);
 
+
+
 protected:
 	virtual void BeginPlay() override;
+
 	// Get specific state in m_AvailableStatsList
 	UBaseState* GetState_ByID(const FString& p_StateID);
 

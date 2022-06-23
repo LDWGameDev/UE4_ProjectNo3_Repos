@@ -93,13 +93,13 @@ void UStateMachineComponent::ChangeState(const FString& p_NewStateID)
 	// Broad cast delegate m_Delegate_ChangeState
 	if (m_Delegate_ChangeState.IsBound()) m_Delegate_ChangeState.Broadcast();
 
-	// Debug new state
-	FGameplayTag* stateTag = m_CurrentState->GetStateTag();
-	if (stateTag != nullptr || !stateTag->IsValid())
-	{
-		FString stateID = m_CurrentState->GetStateID();
-		UE_LOG(LogTemp, Warning, TEXT("StateMachineCom ChangeState() - %s"), *stateID);
-	}
+	//// Debug new state
+	//FGameplayTag* stateTag = m_CurrentState->GetStateTag();
+	//if (stateTag != nullptr || !stateTag->IsValid())
+	//{
+	//	FString stateID = m_CurrentState->GetStateID();
+	//	UE_LOG(LogTemp, Warning, TEXT("StateMachineCom ChangeState() - %s"), *stateID);
+	//}
 }
 
 

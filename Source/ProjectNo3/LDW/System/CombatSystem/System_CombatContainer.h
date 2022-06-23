@@ -134,6 +134,7 @@ struct FStruct_AttackDefinition
 	FHitResult* m_HitResultREF;
 
 	FORCEINLINE bool CheckValid();
+
 	// Some kinds of stats: attacker stats, gethit stats, calculated damage
 };
 

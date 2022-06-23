@@ -17,13 +17,13 @@ UPlayerHumanState_AssassinLA_C1_1::UPlayerHumanState_AssassinLA_C1_1()
 
 	// Create hit boxes array
 	m_Hitboxes_01.Reserve(2);
-	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(140.0f, 50.0f, 20.0f), FVector(140.0f, 50.0f, -0.0f), 60.0f));
-	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(140.0f, -20.0f, -10.0f), FVector(140.0f, -20.0f, -30.0f), 60.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(140.0f, 50.0f, 20.0f), FVector(140.0f, 50.0f, -0.0f), 80.0f));
+	m_Hitboxes_01.Add(FStruct_SphereTrace_Offset(FVector(140.0f, -20.0f, -10.0f), FVector(140.0f, -20.0f, -30.0f), 80.0f));
 
 	m_Hitboxes_02.Reserve(3);
-	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(130.0f, -40.0f, -20.0f), FVector(130.0f, -40.0f, -40.0f), 60.0f));
-	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(160.0f, 30.0f, -10.0f), FVector(160.0f, 30.0f, -30.0f), 60.0f));
-	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(140.0f, 100.0f, 10.0f), FVector(140.0f, 100.0f, -10.0f), 60.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(130.0f, -40.0f, -20.0f), FVector(130.0f, -40.0f, -40.0f), 80.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(160.0f, 30.0f, -10.0f), FVector(160.0f, 30.0f, -30.0f), 80.0f));
+	m_Hitboxes_02.Add(FStruct_SphereTrace_Offset(FVector(140.0f, 100.0f, 10.0f), FVector(140.0f, 100.0f, -10.0f), 80.0f));
 }
 
 
@@ -36,6 +36,7 @@ UPlayerHumanState_AssassinLA_C1_1::UPlayerHumanState_AssassinLA_C1_1()
 void UPlayerHumanState_AssassinLA_C1_1::EnterState()
 {
 	Super::EnterState();
+	RotateToClosetTarget();
 	b_ShoudlResetArmLength = true;
 	m_CharPlayerHuman_Owner->PlayMontageFromTable("Assassin_LightAttack_C1_1");
 	m_CharPlayerHuman_Owner->SetArmLength_CameraFollow_01(c_AdditionalArmLength, 0.5f);

@@ -4,25 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "System_CombatContainer.h"
-#include "Interface_Attackable.generated.h"
+#include "GameplayTagContainer.h"
+#include "Interface_GameplayTagControl.generated.h"
+
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UInterface_Attackable : public UInterface
+class UInterface_GameplayTagControl : public UInterface
 {
 	GENERATED_BODY()
 };
 
 
-
 /**
  * 
  */
-class PROJECTNO3_API IInterface_Attackable
+class PROJECTNO3_API IInterface_GameplayTagControl
 {
 	GENERATED_BODY()
 
 public:
-	virtual void TakeHit(FStruct_AttackDefinition& p_AttackDefinition) = 0;
+	virtual const FGameplayTagContainer& GetTagContainer() = 0;
 };
