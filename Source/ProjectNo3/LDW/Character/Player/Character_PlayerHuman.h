@@ -301,31 +301,6 @@ private:
 		UCameraComponent* m_Camera_Follow_01;
 
 
-	// Timeline functions used for m_Timeline_ControlRigFootIK
-	UFUNCTION()
-		void HandleTimeline_ControlRigFootIK_FloatProgress_01(float p_Value);
-	UFUNCTION()
-		void HandleTimeline_ControlRigFootIK_EndEvent();
-
-	// Timeline functions used for m_Timeline_HandleRotation
-	UFUNCTION()
-		void HandleTimeline_Rotation_FloatProgress_01(float p_Value);
-	UFUNCTION()
-		void HandleTimeline_Rotation_EndEvent();
-
-	// Timeline functions used for m_Timeline_CameraFollow_01_ArmLength
-	UFUNCTION()
-		void HandleTimeline_CameraFollow_01_FloatProgress_01(float p_Value);
-	UFUNCTION()
-		void HandleTimeline_CameraFollow_01_EndEvent();
-	
-	// Timeline functions used for m_Timeline_WeaponBuff_01
-	UFUNCTION()
-		void HandleTimeline_WeaponBuff_01_FloatProgress_01(float p_Value);
-	UFUNCTION()
-		void HandleTimeline_WeaponBuff_01_EndEvent();
-
-
 	// Handle possession and dispossession this character
 	void HandleOnPossessed(AController* p_Controller);
 	void HandleOnUnPossessed();

@@ -346,48 +346,6 @@ AActor* ACharacter_PlayerHuman::FindClosetTargetToAttack(const FVector& p_Offset
  * Private member functions
  */
 
-void ACharacter_PlayerHuman::HandleTimeline_ControlRigFootIK_FloatProgress_01(float p_Value)
-{
-	m_AnimInstance_PlayerHuman_REF->m_ControlRigFootIKAlpha = FMath::Lerp(m_SavedControlRigFootIKAlpha, m_NewValueControlRigFootIKAlpha, p_Value);
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_ControlRigFootIK_EndEvent()
-{
-
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_Rotation_FloatProgress_01(float p_Value)
-{
-	SetActorRotation(FMath::Lerp(m_SavedRotator, m_NewRotator, p_Value), ETeleportType::None);
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_Rotation_EndEvent()
-{
-
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_CameraFollow_01_FloatProgress_01(float p_Value)
-{
-	m_SpringArm_Follow_01->TargetArmLength = FMath::Lerp(m_SavedArmLength_Follow_01, m_NewArmLength_Follow_01, p_Value);
-	m_SpringArm_Follow_01->SocketOffset = FMath::Lerp(m_SavedSocketOffset_Follow_01, m_NewSocketOffset_Follow_01, p_Value);
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_CameraFollow_01_EndEvent()
-{
-
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_WeaponBuff_01_FloatProgress_01(float p_Value)
-{
-
-}
-
-void ACharacter_PlayerHuman::HandleTimeline_WeaponBuff_01_EndEvent()
-{
-	b_IsBuffingWeapon_01 = false;
-	UE_LOG(LogTemp, Warning, TEXT("CharPlayerHuman - HandleTimelineEndEvent - BuffWeapon_01 Ended"));
-}
-
 void ACharacter_PlayerHuman::InitStateMachine()
 {
 	if (!m_StateMachine_01) return;
@@ -550,42 +508,54 @@ void ACharacter_PlayerHuman::CalculateMovement()
 void ACharacter_PlayerHuman::InitTimelines()
 {
 	if (m_CurveFloat_EaseInOutAlpha == nullptr || m_CurveFloat_LinearAlpha == nullptr) return;
-	
+
+	//
 	// Create timeline handles ControlRigFootIKAlpha
-	FOnTimelineFloat OnTimelineControlRig_FloatProgress;
-	FOnTimelineEvent OnTimelineControlRig_EndEvent;
-	OnTimelineControlRig_FloatProgress.BindUFunction(this, FName(TEXT("HandleTimeline_ControlRigFootIK_FloatProgress_01")));
-	OnTimelineControlRig_EndEvent.BindUFunction(this, FName(TEXT("HandleTimeline_ControlRigFootIK_EndEvent")));
+	FOnTimelineFloatStatic OnTimelineControlRig_FloatProgress;
+	OnTimelineControlRig_FloatProgress.BindLambda([&](float p_Value)
+		{
+			m_AnimInstance_PlayerHuman_REF->m_ControlRigFootIKAlpha = FMath::Lerp(m_SavedControlRigFootIKAlpha, m_NewValueControlRigFootIKAlpha, p_Value);
+		});
 	m_Timeline_ControlRigFootIK.AddInterpFloat(m_CurveFloat_EaseInOutAlpha, OnTimelineControlRig_FloatProgress);
-	m_Timeline_ControlRigFootIK.SetTimelineFinishedFunc(OnTimelineControlRig_EndEvent);
 	m_Timeline_ControlRigFootIK.SetTimelineLength(1.0f);
 	m_Timeline_ControlRigFootIK.SetLooping(false);
-
+	
+	//
 	// Create timeline handles this character's rotation
-	FOnTimelineFloat OnTimelineFloat_Rotation_Progress_01;
-	FOnTimelineEvent OnTimelineEvent_Rotation_EndEvent;
-	OnTimelineFloat_Rotation_Progress_01.BindUFunction(this, FName(TEXT("HandleTimeline_Rotation_FloatProgress_01")));
-	OnTimelineEvent_Rotation_EndEvent.BindUFunction(this, FName(TEXT("HandleTimeline_Rotation_EndEvent")));
+	FOnTimelineFloatStatic OnTimelineFloat_Rotation_Progress_01;
+	OnTimelineFloat_Rotation_Progress_01.BindLambda([&](float p_Value)
+		{
+			SetActorRotation(FMath::Lerp(m_SavedRotator, m_NewRotator, p_Value), ETeleportType::None);
+		});
 	m_Timeline_Rotation.AddInterpFloat(m_CurveFloat_EaseInOutAlpha, OnTimelineFloat_Rotation_Progress_01);
-	m_Timeline_Rotation.SetTimelineFinishedFunc(OnTimelineEvent_Rotation_EndEvent);
 	m_Timeline_Rotation.SetTimelineLength(1.0f);
 	m_Timeline_Rotation.SetLooping(false);
 
+	//
 	// Create timeline handles camera group 01 (m_Camera_Follow_01 + m_SpringArm_Follow_01)
-	FOnTimelineFloat OnTimelineFloat_CameraFollow_01_Progress_01;
-	FOnTimelineEvent OnTimelineEvent_CameraFollow_01_EndEvent;
-	OnTimelineFloat_CameraFollow_01_Progress_01.BindUFunction(this, FName(TEXT("HandleTimeline_CameraFollow_01_FloatProgress_01")));
-	OnTimelineEvent_CameraFollow_01_EndEvent.BindUFunction(this, FName(TEXT("HandleTimeline_CameraFollow_01_EndEvent")));
+	FOnTimelineFloatStatic OnTimelineFloat_CameraFollow_01_Progress_01;
+	OnTimelineFloat_CameraFollow_01_Progress_01.BindLambda([&](float p_Value)
+		{
+			m_SpringArm_Follow_01->TargetArmLength = FMath::Lerp(m_SavedArmLength_Follow_01, m_NewArmLength_Follow_01, p_Value);
+			m_SpringArm_Follow_01->SocketOffset = FMath::Lerp(m_SavedSocketOffset_Follow_01, m_NewSocketOffset_Follow_01, p_Value);
+		});
 	m_Timeline_CameraFollow_01.AddInterpFloat(m_CurveFloat_EaseInOutAlpha, OnTimelineFloat_CameraFollow_01_Progress_01);
-	m_Timeline_CameraFollow_01.SetTimelineFinishedFunc(OnTimelineEvent_CameraFollow_01_EndEvent);
 	m_Timeline_CameraFollow_01.SetTimelineLength(1.0f);
 	m_Timeline_CameraFollow_01.SetLooping(false);
 
+	//
 	// Create timeline handles weapon buff effect 01
-	FOnTimelineFloat OnTimelineFloat_WeaponBuff_01_Progress_01;
-	FOnTimelineEvent OnTimelineEvent_WeaponBuff_01_EndEvent;
-	OnTimelineFloat_WeaponBuff_01_Progress_01.BindUFunction(this, FName(TEXT("HandleTimeline_WeaponBuff_01_FloatProgress_01")));
-	OnTimelineEvent_WeaponBuff_01_EndEvent.BindUFunction(this, FName(TEXT("HandleTimeline_WeaponBuff_01_EndEvent")));
+	FOnTimelineFloatStatic OnTimelineFloat_WeaponBuff_01_Progress_01;
+	OnTimelineFloat_WeaponBuff_01_Progress_01.BindLambda([&](float p_Value)
+		{
+
+		});
+	FOnTimelineEventStatic OnTimelineEvent_WeaponBuff_01_EndEvent;
+	OnTimelineEvent_WeaponBuff_01_EndEvent.BindLambda([&]() 
+		{
+			b_IsBuffingWeapon_01 = false;
+			UE_LOG(LogTemp, Warning, TEXT("CharPlayerHuman - HandleTimelineEndEvent - BuffWeapon_01 Ended"));
+		});
 	m_Timeline_WeaponBuff_01.AddInterpFloat(m_CurveFloat_LinearAlpha, OnTimelineFloat_WeaponBuff_01_Progress_01);
 	m_Timeline_WeaponBuff_01.SetTimelineFinishedFunc(OnTimelineEvent_WeaponBuff_01_EndEvent);
 	m_Timeline_WeaponBuff_01.SetTimelineLength(1.0f);

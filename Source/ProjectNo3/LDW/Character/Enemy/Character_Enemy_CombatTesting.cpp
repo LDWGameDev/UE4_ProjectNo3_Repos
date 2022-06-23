@@ -5,7 +5,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "System/CombatSystem/System_CombatContainer.h"
 
 
 ACharacter_Enemy_CombatTesting::ACharacter_Enemy_CombatTesting()
@@ -21,13 +20,11 @@ ACharacter_Enemy_CombatTesting::ACharacter_Enemy_CombatTesting()
 void ACharacter_Enemy_CombatTesting::BeginPlay()
 {
 	Super::BeginPlay();
-	InitTimelines();
 }
 
 void ACharacter_Enemy_CombatTesting::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	TickTimelines(DeltaTime);
 }
 
 
@@ -56,30 +53,4 @@ void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackD
 		break;
 	}
 	}
-}
-
-
-
-
-/**
- * Private member functions
- */
-
-void ACharacter_Enemy_CombatTesting::InitTimelines()
-{
-	if (m_CurveFloat_AlphaEaseInOut == nullptr) return;
-	FOnTimelineFloatStatic OnTimelineFloat_PositionControl_01;
-	OnTimelineFloat_PositionControl_01.BindLambda([&](float p_Value) 
-		{
-			FVector NextPosition = FMath::Lerp(m_SavedCurrentPosition, m_SavedNewPosition, p_Value);
-			this->SetActorLocation(NextPosition, true);
-		});
-	m_Timeline_PositionControl.AddInterpFloat(m_CurveFloat_AlphaEaseInOut, OnTimelineFloat_PositionControl_01);
-	m_Timeline_PositionControl.SetLooping(false);
-	m_Timeline_PositionControl.SetTimelineLength(1.0f);
-}
-
-void ACharacter_Enemy_CombatTesting::TickTimelines(float p_DeltaTime)
-{
-	m_Timeline_PositionControl.TickTimeline(p_DeltaTime);
 }
