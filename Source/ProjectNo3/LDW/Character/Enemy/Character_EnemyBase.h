@@ -27,10 +27,10 @@ class PROJECTNO3_API ACharacter_EnemyBase : public ACharacter, public IInterface
  */
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "Custom EnemyCombatTesting")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom EnemyBase")
 		FGameplayTagContainer m_TagContainer;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Custom EnemyCombatTesting")
+	UPROPERTY(EditDefaultsOnly, Category = "Custom EnemyBase")
 		UCurveFloat* m_CurveFloat_AlphaEaseInOut;
 
 protected:
@@ -39,6 +39,7 @@ private:
 	FTimeline m_Timeline_LocationControl;
 	FVector m_SavedCurrentLocation;
 	FVector m_SavedNewLocation;
+
 
 
 

@@ -37,6 +37,7 @@ void UPlayerHumanState_AssassinLA_C1_1::EnterState()
 {
 	Super::EnterState();
 	RotateToClosetTarget();
+
 	b_ShoudlResetArmLength = true;
 	m_CharPlayerHuman_Owner->PlayMontageFromTable("Assassin_LightAttack_C1_1");
 	m_CharPlayerHuman_Owner->SetArmLength_CameraFollow_01(c_AdditionalArmLength, 0.5f);

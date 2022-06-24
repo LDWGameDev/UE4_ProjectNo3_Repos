@@ -5,6 +5,7 @@
 #include "PlayerHumanState_AssassinLA_C1_1.h"
 
 
+
 UPlayerHumanState_AssassinLA_C1_2::UPlayerHumanState_AssassinLA_C1_2()
 {
 	m_StateID = TEXT("PlayerHumanState_AssassinLA_C1_2");
@@ -38,6 +39,8 @@ UPlayerHumanState_AssassinLA_C1_2::UPlayerHumanState_AssassinLA_C1_2()
 void UPlayerHumanState_AssassinLA_C1_2::EnterState()
 {
 	Super::EnterState();
+	RotateToClosetTarget();
+
 	m_CharPlayerHuman_Owner->PlayMontageFromTable("Assassin_LightAttack_C1_2");
 	SetCameraFollow_01(c_AdditionArmLength, c_SocketOffset, 0.5f, -10.0f, 30.0f, FVector(0.0f, -20.0f, 0.0f), FVector(0.0f, -20.0f, 0.0f));
 }

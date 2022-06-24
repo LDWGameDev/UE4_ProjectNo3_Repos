@@ -334,5 +334,5 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
-		void TestFunction(FVector p_StartOffset, FVector p_EndOffset, float p_Radius);
+		void TestFunction(AActor* p_EnemyActor);
 };

@@ -39,6 +39,8 @@ UPlayerHumanState_AssassinLA_C1_3::UPlayerHumanState_AssassinLA_C1_3()
 void UPlayerHumanState_AssassinLA_C1_3::EnterState()
 {
 	Super::EnterState();
+	RotateToClosetTarget();
+
 	m_CharPlayerHuman_Owner->PlayMontageFromTable("Assassin_LightAttack_C1_3");
 	SetCameraFollow_01(c_AdditionalArmLength, c_SocketOffset, 1.0f, -20.0f, 60.0f, FVector(0.0f, -60.0f, 0.0f), FVector(0.0f, -60.0f, 0.0f));
 }

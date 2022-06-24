@@ -107,19 +107,19 @@ void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Of
 		/*bool TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
 			false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);*/
 		
-		// Debug, replace with above if not need to debug anymore
+		// Debug, replace with 2 lines above if not need to debug anymore
 		bool TraceResult = false;
 		if (p_DebugHitboxes)
 		{
-			UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
+			TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
 				false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 		}
 		else 
 		{
-			UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
+			TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(m_CharPlayerHuman_Owner, StartPosition, EndPosition, SphereTrace.m_Radius, m_CharPlayerHuman_Owner->m_ObjectTypes_AttackHitboxTrace,
 				false, ActorToIgnore, EDrawDebugTrace::None, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 		}
-		//
+		// Debug
 
 		if (TraceResult)
 		{

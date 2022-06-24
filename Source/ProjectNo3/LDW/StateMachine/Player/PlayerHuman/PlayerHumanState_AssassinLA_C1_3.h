@@ -16,7 +16,6 @@ class PROJECTNO3_API UPlayerHumanState_AssassinLA_C1_3 : public UPlayerHuman_Bas
 	GENERATED_BODY()
 	
 
-
 /**
  * Properties
  */

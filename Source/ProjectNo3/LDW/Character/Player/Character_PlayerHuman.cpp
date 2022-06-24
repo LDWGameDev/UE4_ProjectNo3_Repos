@@ -9,10 +9,8 @@
 
 #include "Library/Library_CustomMath.h"
 #include "StateMachine/Player/ContainerPlayerStates.h"
+#include "System/CombatSystem/Interface_Attackable.h"
 #include "System/InteractingSystem/Interface_GameplayTagControl.h"
-
-#include "DrawDebugHelpers.h"
-
 
 
 /**
@@ -630,18 +628,14 @@ void ACharacter_PlayerHuman::HandleDelegate_ReturnViewTarget()
 
 
 
-void ACharacter_PlayerHuman::TestFunction(FVector p_StartOffset, FVector p_EndOffset, float p_Radius)
+void ACharacter_PlayerHuman::TestFunction(AActor* p_EnemyActor)
 {
-	FVector StartPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(this, p_StartOffset);
-	FVector EndPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(this, p_EndOffset);
-	TArray<AActor*> ActorToIgnore;
-	ActorToIgnore.Add(this);
-	TArray<FHitResult> HitResults;
-	bool TraceResult = UKismetSystemLibrary::SphereTraceMultiForObjects(this, StartPosition, EndPosition, p_Radius, m_ObjectTypes_AttackHitboxTrace,
-		false, ActorToIgnore, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.5f);
-	if (TraceResult)
+	IInterface_Attackable* IAttackable = Cast<IInterface_Attackable>(p_EnemyActor);
+	if (IAttackable != nullptr)
 	{
-
+		FStruct_AttackStateDefinition AttackState = FStruct_AttackStateDefinition(EHitType::LightAttack, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
+		FStruct_AttackDefinition AttackDefinition = FStruct_AttackDefinition(this, this, &AttackState, nullptr);
+		IAttackable->TakeHit(AttackDefinition);
 	}
 }
 

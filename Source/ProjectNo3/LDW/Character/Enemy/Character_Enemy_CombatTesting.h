@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character_EnemyBase.h"
+#include "AnimInstance_Enemy_CombatTesting.h"
 #include "Character_Enemy_CombatTesting.generated.h"
 
 
@@ -21,10 +22,18 @@ class PROJECTNO3_API ACharacter_Enemy_CombatTesting : public ACharacter_EnemyBas
  */
 
 public:
+	// DataTable contains damage montages
+	UPROPERTY(EditDefaultsOnly, Category = "Custom EnemyCombatTesting")
+		UDataTable* m_DataTable_DamageMontages;
+
+	// AnimInstance reference. Set value in BeginPlay()
+	UPROPERTY()
+		UAnimInstance_Enemy_CombatTesting* m_AnimInstanceREF_EnemyCombatTesting;
 
 protected:
 
 private:
+
 
 
 
@@ -35,6 +44,7 @@ private:
 public:
 	ACharacter_Enemy_CombatTesting();
 	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
 
 	// Inherited from Interface_Attackable
 	virtual void TakeHit(FStruct_AttackDefinition& p_AttackDefinition) override;
