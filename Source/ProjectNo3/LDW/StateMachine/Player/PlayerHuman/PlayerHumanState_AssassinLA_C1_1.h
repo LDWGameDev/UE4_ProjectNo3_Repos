@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "PlayerHuman_BaseState.h"
-#include "../../../Interface/Interface_PlayerControllerInput.h"
 #include "PlayerHumanState_AssassinLA_C1_1.generated.h"
 
 /**
@@ -15,6 +14,7 @@ class PROJECTNO3_API UPlayerHumanState_AssassinLA_C1_1 : public UPlayerHuman_Bas
 {
 	GENERATED_BODY()
 	
+
 
 /**
  * Properties

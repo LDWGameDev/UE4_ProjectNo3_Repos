@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerHuman_BaseState.h"
-#include "../../../Interface/Interface_PlayerControllerInput.h"
-#include "../../../System/CombatSystem/System_CombatContainer.h"
+#include "System/CombatSystem/System_CombatContainer.h"
 #include "PlayerHumanState_AssassinHA_C2_3.generated.h"
 
 /**

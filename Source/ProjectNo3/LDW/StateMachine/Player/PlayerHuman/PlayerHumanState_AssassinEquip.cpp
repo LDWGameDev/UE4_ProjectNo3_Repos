@@ -2,7 +2,7 @@
 
 
 #include "PlayerHumanState_AssassinEquip.h"
-#include "../../../AnimInstance/AnimInstance_PlayerHuman.h"
+#include "Character/Player/AnimInstance_PlayerHuman.h"
 
 
 UPlayerHumanState_AssassinEquip::UPlayerHumanState_AssassinEquip()

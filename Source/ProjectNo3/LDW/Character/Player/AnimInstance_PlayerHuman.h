@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "GameplayTagContainer.h"
-#include "../StateMachine/StateMachineComponent.h"
+#include "StateMachine/StateMachineComponent.h"
 #include "AnimInstance_PlayerHuman.generated.h"
 
 class ACharacter_PlayerHuman;

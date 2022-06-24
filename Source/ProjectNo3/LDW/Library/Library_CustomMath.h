@@ -26,4 +26,7 @@ public:
 	// Get the world location of a relative location to an actor
 	// Returns (0, 0, 0) if actor not valid
 	static FVector WorldLocationOfRelativeLocationToActor(const AActor* p_PivotActor, const FVector& p_RelativeLocation);
+
+	// Get the enum represent the direction of the angle (Left, Right, Forward, Backward)
+	static EDirection8Ways AngleTo4WaysDirection(float p_Angle);
 };

@@ -8,9 +8,9 @@
 #include "Misc/Timespan.h"
 #include "Components/TimelineComponent.h" 
 #include "Curves/CurveFloat.h"
-#include "../Item/Weapon/Struct_Weapon.h"
+#include "Item/Weapon/Struct_Weapon.h"
 #include "Object_TestObject.h"
-#include "../System/CombatSystem/Interface_Attackable.h"
+#include "System/CombatSystem/Interface_Attackable.h"
 #include "Actor_TestActor.generated.h"
 
 
@@ -40,7 +40,7 @@ public:
 	UFUNCTION()
 		void TimelineEventEvent();
 
-	virtual void TakeHit(const FStruct_AttackDefinition& p_AttackDefinition) override;
+	virtual void TakeHit(FStruct_AttackDefinition& p_AttackDefinition) override;
 
 private:
 	// First 10 elements will be allocated in stack memory,

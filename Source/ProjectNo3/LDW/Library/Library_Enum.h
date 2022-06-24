@@ -21,5 +21,3 @@ enum class EDirection8Ways : uint8
 	Backward_Right			UMETA(DisplayName = "Backward Right"),
 	Backward				UMETA(DisplayName = "Backward")
 };
-
-

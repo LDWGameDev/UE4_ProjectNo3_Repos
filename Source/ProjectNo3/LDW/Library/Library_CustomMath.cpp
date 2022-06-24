@@ -21,3 +21,12 @@ FVector ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(const AActor
 	FVector AdditionLocation = p_RelativeLocation.X * p_PivotActor->GetActorForwardVector() + p_RelativeLocation.Y * p_PivotActor->GetActorRightVector() + p_RelativeLocation.Z * p_PivotActor->GetActorUpVector();
 	return AdditionLocation + p_PivotActor->GetActorLocation();
 }
+
+EDirection8Ways ULibrary_CustomMath::AngleTo4WaysDirection(float p_Angle)
+{
+	float Angle = FMath::Clamp(p_Angle, -180.0f, 180.0f);
+	if (Angle >= -45.0f && Angle <= 45.0f) return EDirection8Ways::Forward;
+	else if (Angle > -135.0f && Angle < -45.0f) return EDirection8Ways::Left;
+	else if (Angle > 45.0f && Angle < 135.0f) return EDirection8Ways::Right;
+	return EDirection8Ways::Backward;
+}

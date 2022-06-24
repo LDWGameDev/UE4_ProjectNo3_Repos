@@ -5,9 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
+
 #include "Actor_WeaponObject.h"
 #include "Actor_HoldingWeapon.h"
+
 #include "Struct_Weapon.generated.h"
+
 
 
 UENUM()
@@ -16,6 +19,7 @@ enum class EWeaponType : uint8
 	None					UMETA(DisplayName = "None"),
 	AssassinSword			UMETA(DisplayName = "Assassin Sword")
 };
+
 
 
 USTRUCT(BlueprintType)

@@ -15,11 +15,12 @@ UENUM(BlueprintType)
 enum class EHitType : uint8 
 {
 	LightAttack			UMETA(DisplayName = "LightAttack"),
+	LightPush			UMETA(DisplayName = "LightPush"),
 	Push				UMETA(DisplayName = "Push"),
 	Pull				UMETA(DisplayName = "Pull"),
 	Knock				UMETA(DisplayName = "Knock"),
 	Stun				UMETA(DisplayName = "Stun"),
-	PushAndStun			UMETA(DisplayName = "PushAndStun"0)
+	PushAndStun			UMETA(DisplayName = "PushAndStun")
 };
 
 
@@ -134,6 +135,7 @@ struct FStruct_AttackDefinition
 	FHitResult* m_HitResultREF;
 
 	FORCEINLINE bool CheckValid();
+
 	// Some kinds of stats: attacker stats, gethit stats, calculated damage
 };
 

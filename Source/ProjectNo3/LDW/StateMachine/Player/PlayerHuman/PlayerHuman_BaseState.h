@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "../../BaseState.h"
-#include "../../../System/CombatSystem/System_CombatContainer.h"
-#include "../../../Character/Character_PlayerHuman.h"
+#include "StateMachine/BaseState.h"
+#include "System/CombatSystem/System_CombatContainer.h"
+#include "Character/Player/Character_PlayerHuman.h"
+#include "PlayerController/Interface_PlayerControllerInput.h"
 #include "PlayerHuman_BaseState.generated.h"
+
 
 /**
  * 
@@ -57,7 +59,10 @@ protected:
 	void SetCameraFollow_01(const float& p_AdditionArmLength, const FVector& p_SocketOffset, float p_BlendTime, float p_ArmLength_AddFwd = -20.0f, float p_ArmLength_AddBwd = 80.0f,
 											FVector p_SocketOffset_AddFwd = FVector(0.0f, -40.0f, 0.0f), FVector p_SocketOffset_AddBwd = FVector(0.0f, -40.0f, 0.0f));
 
-	void CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState);
+	// Check if hitboxes hit target or not
+	void CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState, bool p_DebugHitboxes = false);
+
+	void RotateToClosetTarget(const FVector& p_CheckPositionOffset = FVector(50.0f, 0.0f, 0.0f), float p_CheckRadius = 250.0f, float p_RotateTime = 0.1f);
 
 private:
 };

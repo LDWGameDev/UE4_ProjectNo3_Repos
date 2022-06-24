@@ -2,8 +2,8 @@
 
 
 #include "GameMode_Dev01.h"
+#include "Character/Player/Character_PlayerHuman.h"
 #include "PlayerController/PlayerController_GameplayMain.h"
-#include "Character/Character_PlayerHuman.h"
 
 AGameMode_Dev01::AGameMode_Dev01() 
 {

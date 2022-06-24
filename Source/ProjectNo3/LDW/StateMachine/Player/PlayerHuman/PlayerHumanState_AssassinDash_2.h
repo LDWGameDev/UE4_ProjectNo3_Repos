@@ -3,9 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Library/Library_Enum.h"
 #include "PlayerHuman_BaseState.h"
-#include "../../../Interface/Interface_PlayerControllerInput.h"
-#include "../../../Library/Library_Enum.h"
 #include "PlayerHumanState_AssassinDash_2.generated.h"
 
 /**

@@ -24,5 +24,5 @@ class PROJECTNO3_API IInterface_Attackable
 	GENERATED_BODY()
 
 public:
-	virtual void TakeHit(const FStruct_AttackDefinition& p_AttackDefinition) = 0;
+	virtual void TakeHit(FStruct_AttackDefinition& p_AttackDefinition) = 0;
 };

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 
-#include "../Interface/Interface_PlayerControllerInput.h"
+#include "Interface_PlayerControllerInput.h"
 #include "PlayerController_GameplayMain.generated.h"
 
 

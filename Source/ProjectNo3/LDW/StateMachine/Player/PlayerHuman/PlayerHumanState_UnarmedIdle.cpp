@@ -2,8 +2,7 @@
 
 
 #include "PlayerHumanState_UnarmedIdle.h"
-#include "../../../Interface/Interface_PlayerControllerInput.h"
-#include "../../../AnimInstance/AnimInstance_PlayerHuman.h"
+#include "Character/Player/AnimInstance_PlayerHuman.h"
 #include "PlayerHumanState_UnarmedDash.h"
 
 UPlayerHumanState_UnarmedIdle::UPlayerHumanState_UnarmedIdle()
