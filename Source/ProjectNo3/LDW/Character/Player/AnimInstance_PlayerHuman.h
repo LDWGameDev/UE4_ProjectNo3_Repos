@@ -39,6 +39,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool b_ShouldLocomotionAnimation;
 	UPROPERTY(BlueprintReadOnly)
+		bool b_IsSimulatingPhysics_KnockDown;
+	UPROPERTY(BlueprintReadOnly)
 		int32 m_AnimSetIndex;
 
 	// Control Rig usage

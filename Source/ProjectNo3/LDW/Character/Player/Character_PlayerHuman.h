@@ -52,6 +52,8 @@ class UPlayerHumanState_AssassinHA_C2_3;
 class UPlayerHumanState_AssassinHA_C2_4;
 class UPlayerHumanState_AssassinHA_C3_1;
 class UPlayerHumanState_AssassinHA_C3_2;
+class UPlayerHumanState_AssGetUp;
+class UPlayerHumanState_AssKnockDown;
 
 class AActor_HoldingWeapon;
 
@@ -68,6 +70,18 @@ class PROJECTNO3_API ACharacter_PlayerHuman : public ACharacter
  * Properties
  */
 public:
+	// ObjectType to check for ground
+	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+		TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjectTypes_Ground;
+
+	// DataTable contains action montages
+	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+		UDataTable* m_DataTable_ActionMontages;
+
+	// DataTable contains damage montages
+	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
+		UDataTable* m_DataTable_DamageMontages;
+
 	// Camera system blueprint
 	UPROPERTY(EditDefaultsOnly, Category = "Custom Camera System")
 		TSubclassOf<AActor_CameraSystem> m_Subclass_CameraSystemActor;
@@ -84,6 +98,7 @@ public:
 	// TagContainer contains gameplay tags to check if actor can be targeted to attack or not
 	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
 		FGameplayTagContainer m_TagContainer_ClosetTargetToAttack;
+
 		
 
 	// Ease in and out alpha (0 - 1) curve
@@ -98,9 +113,7 @@ public:
 	// DataTable contains all weapons
 	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
 		UDataTable* m_DataTable_Weapons;
-	// DataTable contains all montages
-	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
-		UDataTable* m_DataTable_Montages;
+
 	
 
 
@@ -120,6 +133,7 @@ public:
 		UPlayerHumanState_UnarmedDash* m_UnarmedDashState;
 	UPROPERTY()
 		UPlayerHumanState_UnarmedRun* m_UnarmedRunState;
+
 	UPROPERTY()
 		UPlayerHumanState_AssassinEquip* m_AssassinEquipState;
 	UPROPERTY()
@@ -160,6 +174,11 @@ public:
 		UPlayerHumanState_AssassinHA_C3_1* m_AssassinHeavyAttack_C3_1;
 	UPROPERTY()
 		UPlayerHumanState_AssassinHA_C3_2* m_AssassinHeavyAttack_C3_2;
+	UPROPERTY()
+		UPlayerHumanState_AssGetUp* m_AssassinGetUp;
+	UPROPERTY()
+		UPlayerHumanState_AssKnockDown* m_AssassinDamage_KnockDown;
+
 
 	FDelegate_LandedSignature m_Delegate_Landed;
 	FDelegate_StartFallingSignature m_Delegate_StartFalling;
@@ -255,8 +274,11 @@ public:
 	// Rotate this character to face another actor over p_BlendTime time. Only rotate the yaw value, roll and pitch remain 0.
 	void RotateToFaceTarget(const AActor* p_ActorToFace, float p_BlendTime);
 	
-	// Play montage from DataTable m_AnimMontagesMap
+	// Play montage from DataTable m_DataTable_ActionMontages
 	bool PlayMontageFromTable(const FName& p_MontageID);
+
+	// Play montage from DataTable m_DataTable_DamageMontages
+	bool PlayMontageFromTable_DamageMontages(const FName& p_MontageID);
 	
 	// Disable root motion of this character for an amount of time
 	void DisableRootMotionForTime(float p_DisableTime);
@@ -334,5 +356,5 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
-		void TestFunction(AActor* p_EnemyActor);
+		void TestFunction(int32 p_CommandIndex);
 };

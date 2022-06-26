@@ -48,8 +48,7 @@ void ACharacter_Enemy_CombatTesting::Tick(float DeltaTime)
 void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackDefinition)
 {
 	Super::TakeHit(p_AttackDefinition);
-	// Turn off checking valid for debugging
-	// if (!p_AttackDefinition.CheckValid()) return;
+	if (!p_AttackDefinition.CheckValid()) return;
 
 	// To calculate damage direction (L, R, F, B) to play damage montage
 	// First, RotatorDamageDirection = LookAtRotator from attacked to attacker
@@ -57,7 +56,7 @@ void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackD
 	RotatorDamageDirection.Pitch = 0.0f;
 	RotatorDamageDirection.Roll = 0.0f;
 	
-	// Second, add appropriate yaw rotation via attack direction
+	// Second, add appropriate yaw rotation to RotatorDamageDirection via attack direction
 	switch ((p_AttackDefinition.m_AttackerAttackStateREF)->m_AttackDirection)
 	{
 	case EDirectionAttack6Ways::Front:
@@ -81,39 +80,44 @@ void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackD
 	}
 	}
 
+	// Calculated angle to play montage using RotatorDamageDirection
 	float DamageAngle = ULibrary_CustomMath::TwoVectorsAngle_Degrees180(UKismetMathLibrary::GetForwardVector(this->GetActorRotation()), UKismetMathLibrary::GetForwardVector(RotatorDamageDirection));
 
-	if (DamageAngle >= -45.0f && DamageAngle <= 45.0f)
+	// Display damage montage (with 4 direction F, B, L, R) via DamageAngle
+	FString DirectionString;
+	FString MontageIDString;
+	if (DamageAngle >= -45.0f && DamageAngle <= 45.0f) DirectionString = TEXT("F");
+	else if (DamageAngle > -135.0f && DamageAngle < -45.0f) DirectionString = TEXT("L");
+	else if (DamageAngle > 45.0f && DamageAngle < 135.0f) DirectionString = TEXT("R");
+	else DirectionString = TEXT("B");
+
+	switch ((p_AttackDefinition.m_AttackerAttackStateREF)->m_HitType)
 	{
-		FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(TEXT("Damage_Light_F_01_Inplace")), nullptr, false);
-		if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
-		{
-			this->PlayAnimMontage(MontageStruct->m_AnimMontage);
-		}
+	case EHitType::LightAttack:
+	{
+		MontageIDString = TEXT("Damage_Light_") + DirectionString + TEXT("_01_Inplace");
+		break;
 	}
-	else if (DamageAngle > -135.0f && DamageAngle < -45.0f)
+	case EHitType::LightPush:
 	{
-		FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(TEXT("Damage_Light_L_01_Inplace")), nullptr, false);
-		if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
-		{
-			this->PlayAnimMontage(MontageStruct->m_AnimMontage);
-		}
+		MontageIDString = TEXT("Damage_LightPush_") + DirectionString + TEXT("_01");
+		break;
 	}
-	else if (DamageAngle > 45.0f && DamageAngle < 135.0f)
+	case EHitType::Push:
 	{
-		FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(TEXT("Damage_Light_R_01_Inplace")), nullptr, false);
-		if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
-		{
-			this->PlayAnimMontage(MontageStruct->m_AnimMontage);
-		}
+		MontageIDString = TEXT("Damage_Push_") + DirectionString + TEXT("_01");
+		break;
 	}
-	else
+	case EHitType::Knock:
 	{
-		FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(TEXT("Damage_Light_B_01_Inplace")), nullptr, false);
-		if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
-		{
-			this->PlayAnimMontage(MontageStruct->m_AnimMontage);
-		}
+		break;
+	}
+	}
+
+	FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(MontageIDString), nullptr, false);
+	if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
+	{
+		this->PlayAnimMontage(MontageStruct->m_AnimMontage);
 	}
 
 	//switch ((p_AttackDefinition.m_AttackerAttackStateREF)->m_HitType)

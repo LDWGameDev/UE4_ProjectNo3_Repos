@@ -196,7 +196,15 @@ void ACharacter_PlayerHuman::RotateToFaceTarget(const AActor* p_ActorToFace, flo
 
 bool ACharacter_PlayerHuman::PlayMontageFromTable(const FName& p_MontageID)
 {
-	FStruct_MontageToPlay* MontageToPlay = m_DataTable_Montages->FindRow<FStruct_MontageToPlay>(p_MontageID, "");
+	FStruct_MontageToPlay* MontageToPlay = m_DataTable_ActionMontages->FindRow<FStruct_MontageToPlay>(p_MontageID, "");
+	if (MontageToPlay == nullptr || MontageToPlay->m_AnimMontage == nullptr) return false;
+	PlayAnimMontage(MontageToPlay->m_AnimMontage);
+	return true;
+}
+
+bool ACharacter_PlayerHuman::PlayMontageFromTable_DamageMontages(const FName& p_MontageID)
+{
+	FStruct_MontageToPlay* MontageToPlay = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(p_MontageID, "");
 	if (MontageToPlay == nullptr || MontageToPlay->m_AnimMontage == nullptr) return false;
 	PlayAnimMontage(MontageToPlay->m_AnimMontage);
 	return true;
@@ -350,7 +358,7 @@ void ACharacter_PlayerHuman::InitStateMachine()
 	auto* AvailableStatesList = m_StateMachine_01->GetAvailableStatesList();
 	if (AvailableStatesList == nullptr) return;
 
-	AvailableStatesList->Reserve(26);
+	AvailableStatesList->Reserve(28);
 
 	m_UnarmedIdleState = NewObject<UPlayerHumanState_UnarmedIdle>();
 	m_UnarmedIdleState->InitState_PlayerHuman(this, m_StateMachine_01);
@@ -404,6 +412,10 @@ void ACharacter_PlayerHuman::InitStateMachine()
 	m_AssassinHeavyAttack_C3_1->InitState_PlayerHuman(this, m_StateMachine_01);
 	m_AssassinHeavyAttack_C3_2 = NewObject<UPlayerHumanState_AssassinHA_C3_2>();
 	m_AssassinHeavyAttack_C3_2->InitState_PlayerHuman(this, m_StateMachine_01);
+	m_AssassinGetUp = NewObject<UPlayerHumanState_AssGetUp>();
+	m_AssassinGetUp->InitState_PlayerHuman(this, m_StateMachine_01);
+	m_AssassinDamage_KnockDown = NewObject<UPlayerHumanState_AssKnockDown>();
+	m_AssassinDamage_KnockDown->InitState_PlayerHuman(this, m_StateMachine_01);
 
 	AvailableStatesList->Add(m_UnarmedIdleState);
 	AvailableStatesList->Add(m_UnarmedJogState);
@@ -431,6 +443,8 @@ void ACharacter_PlayerHuman::InitStateMachine()
 	AvailableStatesList->Add(m_AssassinHeavyAttack_C2_4);
 	AvailableStatesList->Add(m_AssassinHeavyAttack_C3_1);
 	AvailableStatesList->Add(m_AssassinHeavyAttack_C3_2);
+	AvailableStatesList->Add(m_AssassinGetUp);
+	AvailableStatesList->Add(m_AssassinDamage_KnockDown);
 }
 
 void ACharacter_PlayerHuman::HandleOnPossessed(AController* p_Controller)
@@ -628,14 +642,20 @@ void ACharacter_PlayerHuman::HandleDelegate_ReturnViewTarget()
 
 
 
-void ACharacter_PlayerHuman::TestFunction(AActor* p_EnemyActor)
+void ACharacter_PlayerHuman::TestFunction(int32 p_CommandIndex)
 {
-	IInterface_Attackable* IAttackable = Cast<IInterface_Attackable>(p_EnemyActor);
-	if (IAttackable != nullptr)
+	switch (p_CommandIndex)
 	{
-		FStruct_AttackStateDefinition AttackState = FStruct_AttackStateDefinition(EHitType::LightAttack, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
-		FStruct_AttackDefinition AttackDefinition = FStruct_AttackDefinition(this, this, &AttackState, nullptr);
-		IAttackable->TakeHit(AttackDefinition);
+	case 0:
+	{
+		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinKnockDown"));
+		break;
+	}
+	case 1:
+	{
+		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinGetUp"));
+		break;
+	}
 	}
 }
 
