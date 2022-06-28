@@ -7,14 +7,27 @@
 
 #include "Character/Struct_MontageToPlay.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "TimerManager.h"
+
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_IdleState.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageState.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_KnockOutSimulate.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_GetUpSimulate.h"
 #include "Library/Library_CustomMath.h"
 
 
-
+/**
+ * 
+ */
 ACharacter_Enemy_CombatTesting::ACharacter_Enemy_CombatTesting()
 {
-	// Set CapsuleComponent defaults
-	GetCapsuleComponent()->InitCapsuleSize(40.0f, 86.0f);
+	// CapsuleComponent defaults
+	m_DefaultCapsuleHalfHeight = 96.0f;
+	m_DefaultCapsuleRadius = 42.0f;
+	GetCapsuleComponent()->InitCapsuleSize(m_DefaultCapsuleRadius, m_DefaultCapsuleHalfHeight);
+
+	// SkeletalMesh defaults
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -m_DefaultCapsuleHalfHeight));
 
 	// Set CharacterMovement defaults
 	GetCharacterMovement()->GravityScale = 2.5f;
@@ -30,11 +43,34 @@ void ACharacter_Enemy_CombatTesting::BeginPlay()
 {
 	Super::BeginPlay();
 	m_AnimInstanceREF_EnemyCombatTesting = Cast<UAnimInstance_Enemy_CombatTesting>(GetMesh()->GetAnimInstance());
+	InitStates();
+	ActivateEnemy(true);
 }
 
 void ACharacter_Enemy_CombatTesting::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACharacter_Enemy_CombatTesting::ActivateEnemy(bool p_DoActivate)
+{
+	Super::ActivateEnemy(p_DoActivate);
+	if (m_StateMachine_01 == nullptr) return;
+
+	if (p_DoActivate)
+	{
+		// Delay activate m_StateMachine_01 and trigger start state
+		FTimerHandle TimerHandle_DelayActivateEnemy;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle_DelayActivateEnemy, [&]()
+			{
+				m_StateMachine_01->ActivateStateMachine(TEXT("CombatTesting_IdleState"));
+			}, 0.5f, false);
+	}
+	else
+	{
+		// Deactivate enemy
+		m_StateMachine_01->DeactivateStateMachine();
+	}
 }
 
 
@@ -48,92 +84,93 @@ void ACharacter_Enemy_CombatTesting::Tick(float DeltaTime)
 void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackDefinition)
 {
 	Super::TakeHit(p_AttackDefinition);
-	if (!p_AttackDefinition.CheckValid()) return;
+	if (m_StateMachine_01 == nullptr || !p_AttackDefinition.CheckValid()) return;
+	// Check current state
+	if (!m_TagContainer_StatesCanChangeToGetDamage.IsValid() || m_StateMachine_01->GetCurrentState() == nullptr || !m_StateMachine_01->GetCurrentState()->GetStateTag()->IsValid() ||
+		!m_StateMachine_01->GetCurrentState()->GetStateTag()->MatchesAny(m_TagContainer_StatesCanChangeToGetDamage)) return;
 
-	// To calculate damage direction (L, R, F, B) to play damage montage
-	// First, RotatorDamageDirection = LookAtRotator from attacked to attacker
-	FRotator RotatorDamageDirection = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), (p_AttackDefinition.m_AttackerActor)->GetActorLocation());
-	RotatorDamageDirection.Pitch = 0.0f;
-	RotatorDamageDirection.Roll = 0.0f;
-	
-	// Second, add appropriate yaw rotation to RotatorDamageDirection via attack direction
-	switch ((p_AttackDefinition.m_AttackerAttackStateREF)->m_AttackDirection)
+	if (p_AttackDefinition.m_AttackerAttackStateREF->m_HitType == EHitType::Knock)
 	{
-	case EDirectionAttack6Ways::Front:
+		m_KnockOutSimulateStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_KnockOutSimulateState"));
+	}
+	else
 	{
-		break;
+		m_DamageStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_LightDamageState"));
 	}
-	case EDirectionAttack6Ways::Back:
-	{
-		RotatorDamageDirection.Yaw += 180.0f;
-		break;
-	}
-	case EDirectionAttack6Ways::Left:
-	{
-		RotatorDamageDirection.Yaw -= 90.0f;
-		break;
-	}
-	case EDirectionAttack6Ways::Right:
-	{
-		RotatorDamageDirection.Yaw += 90.0f;
-		break;
-	}
-	}
+}
 
-	// Calculated angle to play montage using RotatorDamageDirection
-	float DamageAngle = ULibrary_CustomMath::TwoVectorsAngle_Degrees180(UKismetMathLibrary::GetForwardVector(this->GetActorRotation()), UKismetMathLibrary::GetForwardVector(RotatorDamageDirection));
-
-	// Display damage montage (with 4 direction F, B, L, R) via DamageAngle
-	FString DirectionString;
-	FString MontageIDString;
-	if (DamageAngle >= -45.0f && DamageAngle <= 45.0f) DirectionString = TEXT("F");
-	else if (DamageAngle > -135.0f && DamageAngle < -45.0f) DirectionString = TEXT("L");
-	else if (DamageAngle > 45.0f && DamageAngle < 135.0f) DirectionString = TEXT("R");
-	else DirectionString = TEXT("B");
-
-	switch ((p_AttackDefinition.m_AttackerAttackStateREF)->m_HitType)
-	{
-	case EHitType::LightAttack:
-	{
-		MontageIDString = TEXT("Damage_Light_") + DirectionString + TEXT("_01_Inplace");
-		break;
-	}
-	case EHitType::LightPush:
-	{
-		MontageIDString = TEXT("Damage_LightPush_") + DirectionString + TEXT("_01");
-		break;
-	}
-	case EHitType::Push:
-	{
-		MontageIDString = TEXT("Damage_Push_") + DirectionString + TEXT("_01");
-		break;
-	}
-	case EHitType::Knock:
-	{
-		break;
-	}
-	}
-
-	FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(MontageIDString), nullptr, false);
+void ACharacter_Enemy_CombatTesting::PlayMontageFromTable_DamageMontage(const FName& p_MontageID)
+{
+	FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(p_MontageID, nullptr, false);
 	if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
 	{
-		this->PlayAnimMontage(MontageStruct->m_AnimMontage);
+		PlayAnimMontage(MontageStruct->m_AnimMontage);
 	}
+}
 
-	//switch ((p_AttackDefinition.m_AttackerAttackStateREF)->m_HitType)
-	//{
-	//case EHitType::LightAttack:
-	//{
-	//	FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(FName(TEXT("Damage_Light_F_01_Inplace")), nullptr, false);
-	//	if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
-	//	{
-	//		this->PlayAnimMontage(MontageStruct->m_AnimMontage);
-	//	}
-	//	break;
-	//}
-	//case EHitType::Knock:
-	//{
-	//	break;
-	//}
-	//}
+
+
+
+
+/**
+ * Private member functions
+ */
+
+void ACharacter_Enemy_CombatTesting::InitStates()
+{
+	if (m_StateMachine_01 == nullptr || m_StateMachine_01->GetAvailableStatesList() == nullptr) return;
+	auto* StatesListREF = m_StateMachine_01->GetAvailableStatesList();
+	StatesListREF->Reserve(3);
+
+	m_IdleStateREF = NewObject<UCombatTesting_IdleState>();
+	m_IdleStateREF->InitState(m_StateMachine_01, this);
+	m_DamageStateREF = NewObject<UCombatTesting_DamageState>();
+	m_DamageStateREF->InitState(m_StateMachine_01, this);
+	m_KnockOutSimulateStateREF = NewObject<UCombatTesting_KnockOutSimulate>();
+	m_KnockOutSimulateStateREF->InitState(m_StateMachine_01, this);
+	m_GetUpSimulateStateREF = NewObject<UCombatTesting_GetUpSimulate>();
+	m_GetUpSimulateStateREF->InitState(m_StateMachine_01, this);
+
+	StatesListREF->Add(m_IdleStateREF);
+	StatesListREF->Add(m_DamageStateREF);
+	StatesListREF->Add(m_KnockOutSimulateStateREF);
+	StatesListREF->Add(m_GetUpSimulateStateREF);
+}
+
+
+
+
+
+
+
+
+
+
+void ACharacter_Enemy_CombatTesting::TestFunction(int32 p_CommandIndex)
+{
+	switch (p_CommandIndex)
+	{
+	case 0:
+	{
+		m_StateMachine_01->ChangeState((TEXT("CombatTesting_KnockOutSimulateState")));
+		break;
+	}
+	case 1:
+	{
+		m_StateMachine_01->ChangeState((TEXT("CombatTesting_GetUpSimulateState")));
+		break;
+	}
+	case 2:
+	{
+		SetCapsuleSize(150.0f, 100.0f, 1.0f);
+		break;
+	}
+	case 3:
+	{
+		ResetCapsuleSize(0.0f);
+		break;
+	}
+	}
 }

@@ -7,6 +7,7 @@
 #include "AnimInstance_Enemy_CombatTesting.generated.h"
 
 
+class ACharacter_Enemy_CombatTesting;
 
 /**
  * 
@@ -17,4 +18,26 @@ class PROJECTNO3_API UAnimInstance_Enemy_CombatTesting : public UAnimInstance_En
 {
 	GENERATED_BODY()
 	
+
+/**
+ * Properties
+ */
+public:
+	UPROPERTY(BlueprintReadOnly)
+		bool b_IsSimulatingPhysics_DamageKnockOut;
+
+protected:
+private:
+	UPROPERTY()
+		ACharacter_Enemy_CombatTesting* m_Character_EnemyCombatTestingREF;
+
+/**
+ * Functions
+ */
+public:
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+protected:
+private:
 };

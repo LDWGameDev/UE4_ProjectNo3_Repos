@@ -33,6 +33,8 @@ private:
 
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_01;
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_02;
+	FStruct_AttackStateDefinition m_AttackStateDefinition_01 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Up, false, FVector(), 0.0f);
+	FStruct_AttackStateDefinition m_AttackStateDefinition_02 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Up, false, FVector(), 0.0f);
 
 	FDelegate1_MovementSignature* m_MoveForward_DelegateREF;
 	FDelegate1_MovementSignature* m_MoveRight_DelegateREF;
@@ -68,4 +70,6 @@ private:
 	void HandleAction_AnimNotify_01();
 	void HandleAction_AnimNotify_02();
 	void HandleAction_EndAttack_01();
+	void HandleTriggerAttack_01();
+	void HandleTriggerAttack_02();
 };

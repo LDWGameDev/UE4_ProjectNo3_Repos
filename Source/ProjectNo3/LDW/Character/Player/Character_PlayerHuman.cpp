@@ -27,7 +27,11 @@ ACharacter_PlayerHuman::ACharacter_PlayerHuman()
 	bUseControllerRotationRoll = false;
 	
 	// CapsuleComponent defaults
-	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(c_DefaultCapsuleRadius, c_DefaultCapsuleHalfHeight);
+
+	// SkeletalMesh defaults
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -c_DefaultCapsuleHalfHeight));
+	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
 	// CharacterMovementt defaults
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -333,6 +337,29 @@ AActor* ACharacter_PlayerHuman::FindClosetTargetToAttack(const FVector& p_Offset
 	return FindClosetActor_SphereCheck(p_OffsetPositionToCheck, p_RadiusToCheck, m_ObjectTypes_ClosetTargetToAttack, m_TagContainer_ClosetTargetToAttack);
 }
 
+void ACharacter_PlayerHuman::SetCapsuleSize(float p_NewCapsuleHalfHeight, float p_NewCapsuleRadius, float p_BlendTime)
+{
+	if (p_NewCapsuleHalfHeight <= 0.0f || p_NewCapsuleRadius <= 0.0f) return;
+	m_SavedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	m_SavedCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+	m_SavedNewCapsuleHalfHeight = p_NewCapsuleHalfHeight;
+	m_SavedNewCapsuleRadius = p_NewCapsuleRadius;
+	if (p_BlendTime <= 0)
+	{
+		GetCapsuleComponent()->SetCapsuleSize(p_NewCapsuleRadius, p_NewCapsuleHalfHeight, true);
+		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -p_NewCapsuleHalfHeight));
+	}
+	else
+	{
+		m_Timeline_CapsuleSizeControl.SetPlayRate(1.0f / p_BlendTime);
+		m_Timeline_CapsuleSizeControl.PlayFromStart();
+	}
+}
+
+void ACharacter_PlayerHuman::ResetCapsuleSize(float p_BlendTime)
+{
+	SetCapsuleSize(c_DefaultCapsuleHalfHeight, c_DefaultCapsuleRadius, p_BlendTime);
+}
 
 
 
@@ -574,6 +601,18 @@ void ACharacter_PlayerHuman::InitTimelines()
 	m_Timeline_WeaponBuff_01.SetLooping(false);
 
 
+	// Create timeline handles capsule component size
+	FOnTimelineFloatStatic OnTimelineFloat_CapsuleSizeControl_01;
+	OnTimelineFloat_CapsuleSizeControl_01.BindLambda([&](float p_Value)
+		{
+			float HalfHeight = FMath::Lerp(m_SavedCapsuleHalfHeight, m_SavedNewCapsuleHalfHeight, p_Value);
+			float Radius = FMath::Lerp(m_SavedCapsuleRadius, m_SavedNewCapsuleRadius, p_Value);
+			GetCapsuleComponent()->SetCapsuleSize(Radius, HalfHeight, true);
+			GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -HalfHeight));
+		});
+	m_Timeline_CapsuleSizeControl.AddInterpFloat(m_CurveFloat_EaseInOutAlpha, OnTimelineFloat_CapsuleSizeControl_01);
+	m_Timeline_CapsuleSizeControl.SetTimelineLength(1.0f);
+	m_Timeline_CapsuleSizeControl.SetLooping(false);
 }
 
 void ACharacter_PlayerHuman::TimelineTicks(float p_DeltaTime)
@@ -582,6 +621,7 @@ void ACharacter_PlayerHuman::TimelineTicks(float p_DeltaTime)
 	m_Timeline_Rotation.TickTimeline(p_DeltaTime);
 	m_Timeline_CameraFollow_01.TickTimeline(p_DeltaTime);
 	m_Timeline_WeaponBuff_01.TickTimeline(p_DeltaTime);
+	m_Timeline_CapsuleSizeControl.TickTimeline(p_DeltaTime);
 }
 
 void ACharacter_PlayerHuman::EnableRootMotion()

@@ -6,6 +6,7 @@
 #include "PlayerHuman_BaseState.h"
 #include "PlayerHumanState_UnarmedRun.generated.h"
 
+
 /**
  * 
  */
@@ -36,6 +37,7 @@ private:
 	float m_MoveForwardValue;
 	float m_MoveRightValue;
 	bool b_IsHoldingRunKey;
+
 
 /**
  * Functions

@@ -208,7 +208,9 @@ private:
 	const float c_DefaultArmLength_Follow_01 = 350.0f;
 	const float c_BuffWeapon_01_BuffTime = 3.0f;
 	const FRotator c_SpringArm_DefaultTargetRotation = FRotator(330.0f, 30.0f, 0.0f);
-
+	const float c_DefaultCapsuleHalfHeight = 96.0f;
+	const float c_DefaultCapsuleRadius = 42.0f;
+	
 	// Delegate REF to m_Delegate_BuffWeapon_01 of PlayerControllerMainController
 	FDelegate_ActionSignature* m_BuffWeapon_01_DelegateREF;
 	// Delegate REF to m_Delegate_ReturnViewTarget of m_CameraSystem (Actor_CameraSystem)
@@ -238,8 +240,12 @@ private:
 	FTimeline m_Timeline_WeaponBuff_01;
 	float m_SavedTimeValue_WeaponBuff_01;
 
-	
-
+	// Timeline controls CapsuleComponent size
+	FTimeline m_Timeline_CapsuleSizeControl;
+	float m_SavedCapsuleHalfHeight;
+	float m_SavedCapsuleRadius;
+	float m_SavedNewCapsuleHalfHeight;
+	float m_SavedNewCapsuleRadius;
 
 
 /**
@@ -303,6 +309,12 @@ public:
 
 	// Find closet actor to attack
 	AActor* FindClosetTargetToAttack(const FVector& p_OffsetPositionToCheck, float p_RadiusToCheck);
+
+	// Set CapsuleComponent size using m_Timeline_CapsuleSizeControl
+	void SetCapsuleSize(float p_NewCapsuleHalfHeight, float p_NewCapsuleRadius, float p_BlendTime);
+	
+	// Reset CapsuleComponent size to default const values declared in properties
+	void ResetCapsuleSize(float p_BlendTime);
 
 
 protected:

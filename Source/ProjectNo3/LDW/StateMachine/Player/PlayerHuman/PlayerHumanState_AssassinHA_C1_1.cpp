@@ -154,3 +154,13 @@ void UPlayerHumanState_AssassinHA_C1_1::HandleAction_EndAttack_01()
 	}
 	else ChangeState("PlayerHumanState_AssassinIdle");
 }
+
+void UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_01()
+{
+	if (!b_IsInState) return;
+}
+
+void UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_02()
+{
+	if (!b_IsInState) return;
+}
