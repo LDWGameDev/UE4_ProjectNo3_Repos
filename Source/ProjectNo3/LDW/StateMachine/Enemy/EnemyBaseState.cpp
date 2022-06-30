@@ -60,5 +60,5 @@ void UEnemyBaseState::HandleAnimNotify_03()
 
 void UEnemyBaseState::HandleEndMontage()
 {
-
+	if (GetStateTime_StartToNow() < 0.25f) return;
 }

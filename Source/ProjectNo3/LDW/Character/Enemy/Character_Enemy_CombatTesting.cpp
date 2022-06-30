@@ -11,8 +11,10 @@
 
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_IdleState.h"
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageState.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageInAirState.h"
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_KnockOutSimulate.h"
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_GetUpSimulate.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_FallState.h"
 #include "Library/Library_CustomMath.h"
 
 
@@ -43,6 +45,7 @@ void ACharacter_Enemy_CombatTesting::BeginPlay()
 {
 	Super::BeginPlay();
 	m_AnimInstanceREF_EnemyCombatTesting = Cast<UAnimInstance_Enemy_CombatTesting>(GetMesh()->GetAnimInstance());
+	if (m_StateMachine_01 != nullptr) m_StateMachine_01->m_Delegate_ChangeState.AddUObject(this, &ACharacter_Enemy_CombatTesting::HandleDelegate_ChangeState);
 	InitStates();
 	ActivateEnemy(true);
 }
@@ -89,10 +92,15 @@ void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackD
 	if (!m_TagContainer_StatesCanChangeToGetDamage.IsValid() || m_StateMachine_01->GetCurrentState() == nullptr || !m_StateMachine_01->GetCurrentState()->GetStateTag()->IsValid() ||
 		!m_StateMachine_01->GetCurrentState()->GetStateTag()->MatchesAny(m_TagContainer_StatesCanChangeToGetDamage)) return;
 
-	if (p_AttackDefinition.m_AttackerAttackStateREF->m_HitType == EHitType::Knock)
+	if (p_AttackDefinition.m_AttackerAttackStateREF->m_HitType == EHitType::KnockSimulate)
 	{
 		m_KnockOutSimulateStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
 		m_StateMachine_01->ChangeState(TEXT("CombatTesting_KnockOutSimulateState"));
+	}
+	else if(p_AttackDefinition.m_AttackerAttackStateREF->m_AttackDirection == EDirectionAttack6Ways::Up)
+	{
+		m_DamageInAirStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_DamageInAirState"));
 	}
 	else
 	{
@@ -110,6 +118,25 @@ void ACharacter_Enemy_CombatTesting::PlayMontageFromTable_DamageMontage(const FN
 	}
 }
 
+void ACharacter_Enemy_CombatTesting::PlayMontageFromTable_DamageMontage(const FName& p_MontageID, float p_TimeToPlay)
+{
+	FStruct_MontageToPlay* MontageStruct = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(p_MontageID, nullptr, false);
+	if (MontageStruct != nullptr && MontageStruct->m_AnimMontage != nullptr)
+	{
+		if (p_TimeToPlay <= 0.0f)
+		{
+			PlayAnimMontage(MontageStruct->m_AnimMontage);
+		}
+		else
+		{
+			float MontageLength = MontageStruct->m_AnimMontage->GetPlayLength();
+			PlayAnimMontage(MontageStruct->m_AnimMontage, MontageLength / p_TimeToPlay);
+		}
+	}
+}
+
+
+
 
 
 
@@ -122,7 +149,7 @@ void ACharacter_Enemy_CombatTesting::InitStates()
 {
 	if (m_StateMachine_01 == nullptr || m_StateMachine_01->GetAvailableStatesList() == nullptr) return;
 	auto* StatesListREF = m_StateMachine_01->GetAvailableStatesList();
-	StatesListREF->Reserve(3);
+	StatesListREF->Reserve(5);
 
 	m_IdleStateREF = NewObject<UCombatTesting_IdleState>();
 	m_IdleStateREF->InitState(m_StateMachine_01, this);
@@ -132,11 +159,22 @@ void ACharacter_Enemy_CombatTesting::InitStates()
 	m_KnockOutSimulateStateREF->InitState(m_StateMachine_01, this);
 	m_GetUpSimulateStateREF = NewObject<UCombatTesting_GetUpSimulate>();
 	m_GetUpSimulateStateREF->InitState(m_StateMachine_01, this);
+	m_FallStateREF = NewObject<UCombatTesting_FallState>();
+	m_FallStateREF->InitState(m_StateMachine_01, this);
+	m_DamageInAirStateREF = NewObject<UCombatTesting_DamageInAirState>();
+	m_DamageInAirStateREF->InitState(m_StateMachine_01, this);
 
 	StatesListREF->Add(m_IdleStateREF);
 	StatesListREF->Add(m_DamageStateREF);
 	StatesListREF->Add(m_KnockOutSimulateStateREF);
 	StatesListREF->Add(m_GetUpSimulateStateREF);
+	StatesListREF->Add(m_FallStateREF);
+	StatesListREF->Add(m_DamageInAirStateREF);
+}
+
+void ACharacter_Enemy_CombatTesting::HandleDelegate_ChangeState()
+{
+	if (m_AnimInstanceREF_EnemyCombatTesting != nullptr && m_StateMachine_01 != nullptr) m_AnimInstanceREF_EnemyCombatTesting->CheckCurrentState(m_StateMachine_01->GetCurrentState());
 }
 
 
@@ -164,12 +202,8 @@ void ACharacter_Enemy_CombatTesting::TestFunction(int32 p_CommandIndex)
 	}
 	case 2:
 	{
-		SetCapsuleSize(150.0f, 100.0f, 1.0f);
-		break;
-	}
-	case 3:
-	{
-		ResetCapsuleSize(0.0f);
+		FVector NextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 150.0f);
+		MoveToLocation(NextLocation, 2.0f);
 		break;
 	}
 	}

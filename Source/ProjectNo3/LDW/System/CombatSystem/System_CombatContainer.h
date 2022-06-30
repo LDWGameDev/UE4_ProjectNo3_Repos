@@ -19,8 +19,10 @@ enum class EHitType : uint8
 	Push				UMETA(DisplayName = "Push"),
 	Pull				UMETA(DisplayName = "Pull"),
 	Knock				UMETA(DisplayName = "Knock"),
+	KnockSimulate		UMETA(DisplayName = "KnockSimulate"),
 	Stun				UMETA(DisplayName = "Stun"),
-	PushAndStun			UMETA(DisplayName = "PushAndStun")
+	PushAndStun			UMETA(DisplayName = "PushAndStun"), 
+	LowTakeDown			UMETA(DisplayName = "LowTakeDown")
 };
 
 

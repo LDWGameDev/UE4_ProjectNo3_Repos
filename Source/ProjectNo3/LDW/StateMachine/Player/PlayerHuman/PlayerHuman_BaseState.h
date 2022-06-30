@@ -29,6 +29,7 @@ protected:
 		ACharacter_PlayerHuman* m_CharPlayerHuman_Owner;
 
 	TArray<AActor*> m_HasGotHitActors;
+	bool b_HasHitTarget;
 
 private:
 

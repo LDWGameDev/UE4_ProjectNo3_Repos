@@ -35,8 +35,9 @@ public:
 	virtual void TickState(float p_DeltaTime) override;
 	virtual void ExitState() override;
 
+	virtual void HandleEndMontage() override;
 
 protected:
 private:
-	void PlayDamageMontage();
+	void HandleGetDamage();
 };

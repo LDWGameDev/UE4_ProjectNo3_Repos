@@ -98,24 +98,6 @@ void UAnimInstance_PlayerHuman::BroadCastDelegate_EndAttack_02()
 	}
 }
 
-void UAnimInstance_PlayerHuman::CheckForCurrentState()
-{
-	if (m_CharacterPlayerHuman_OwnerCharacter == nullptr) return;
-	UStateMachineComponent* StateMachineREF = m_CharacterPlayerHuman_OwnerCharacter->GetStateMachine();
-	if (StateMachineREF == nullptr) return;
-
-	UBaseState* CurrentState = StateMachineREF->GetCurrentState();
-	if (CurrentState != nullptr)
-	{
-		FGameplayTag* StateTag = CurrentState->GetStateTag();
-		if (StateTag != nullptr)
-		{
-			b_ShouldLocomotionAnimation = StateTag->MatchesAny(m_TagContainer_LocomotionAnimationStates);
-			b_IsInAir = StateTag->MatchesAny(m_TagContainer_InAirStates);
-		}
-	}
-}
-
 void UAnimInstance_PlayerHuman::BroadCastDelegate_TriggerAttack_01()
 {
 	if (m_CharacterPlayerHuman_OwnerCharacter != nullptr && m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_01.IsBound())
@@ -137,5 +119,23 @@ void UAnimInstance_PlayerHuman::BroadCastDelegate_TriggerAttack_03()
 	if (m_CharacterPlayerHuman_OwnerCharacter != nullptr && m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_03.IsBound())
 	{
 		m_CharacterPlayerHuman_OwnerCharacter->m_Delegate_TriggerAttack_03.Broadcast();
+	}
+}
+
+void UAnimInstance_PlayerHuman::CheckForCurrentState()
+{
+	if (m_CharacterPlayerHuman_OwnerCharacter == nullptr) return;
+	UStateMachineComponent* StateMachineREF = m_CharacterPlayerHuman_OwnerCharacter->GetStateMachine();
+	if (StateMachineREF == nullptr) return;
+
+	UBaseState* CurrentState = StateMachineREF->GetCurrentState();
+	if (CurrentState != nullptr)
+	{
+		FGameplayTag* StateTag = CurrentState->GetStateTag();
+		if (StateTag != nullptr)
+		{
+			b_ShouldLocomotionAnimation = StateTag->MatchesAny(m_TagContainer_LocomotionAnimationStates);
+			b_IsInAir = StateTag->MatchesAny(m_TagContainer_InAirStates);
+		}
 	}
 }

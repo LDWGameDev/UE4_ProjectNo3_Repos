@@ -33,7 +33,7 @@ void UPlayerHuman_BaseState::EnterState()
 {
 	Super::EnterState();
 	if (m_CharPlayerHuman_Owner == nullptr) return;
-
+	b_HasHitTarget = false;
 }
 
 void UPlayerHuman_BaseState::TickState(float p_DeltaTime)
@@ -47,7 +47,6 @@ void UPlayerHuman_BaseState::ExitState()
 {
 	Super::ExitState();
 	if (m_CharPlayerHuman_Owner == nullptr) return;
-
 }
 
 void UPlayerHuman_BaseState::BindInputHandlingFunctions(AController* p_PlayerController)
@@ -96,6 +95,7 @@ void UPlayerHuman_BaseState::SetCameraFollow_01(const float& p_AdditionArmLength
 void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Offset>& p_Hitboxes, FStruct_AttackStateDefinition& p_AttackState, bool p_DebugHitboxes)
 {
 	m_HasGotHitActors.Empty();
+	b_HasHitTarget = false;
 	for (FStruct_SphereTrace_Offset& SphereTrace : p_Hitboxes)
 	{
 		FVector StartPosition = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(m_CharPlayerHuman_Owner, SphereTrace.m_StartOffsetPosition);
@@ -133,6 +133,7 @@ void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Of
 					FStruct_AttackDefinition AttackDefinition(m_CharPlayerHuman_Owner, HitResult.GetActor(), &p_AttackState, &HitResult);
 					IAttackable->TakeHit(AttackDefinition);
 					m_HasGotHitActors.Add(HitResult.GetActor());
+					b_HasHitTarget = true;
 				}
 			}
 		}

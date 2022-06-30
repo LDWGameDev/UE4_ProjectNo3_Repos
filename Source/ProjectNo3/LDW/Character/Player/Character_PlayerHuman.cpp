@@ -696,6 +696,11 @@ void ACharacter_PlayerHuman::TestFunction(int32 p_CommandIndex)
 		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinGetUp"));
 		break;
 	}
+	case 2:
+	{
+		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinHA_C1_1"));
+		break;
+	}
 	}
 }
 

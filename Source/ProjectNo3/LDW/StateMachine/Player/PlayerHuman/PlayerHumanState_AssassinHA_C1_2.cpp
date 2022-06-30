@@ -26,6 +26,7 @@ void UPlayerHumanState_AssassinHA_C1_2::EnterState()
 	(m_CharPlayerHuman_Owner->GetCharacterMovement())->SetMovementMode(EMovementMode::MOVE_Flying, 0);
 	m_CharPlayerHuman_Owner->PlayMontageFromTable(FName(TEXT("Assassin_HeavyAttack_C1_2")));
 	SetCameraFollow_01(c_AdditionArmLength, c_SocketOffset, 1.0f, -10.0f, 60.0f, FVector(0.0f, -40.0f, 0.0f), FVector(0.0f, -40.0f, 0.0f));
+	m_CharPlayerHuman_Owner->SetCapsuleSize(96.0f, 8.0f, 0.1f);
 }
 
 void UPlayerHumanState_AssassinHA_C1_2::TickState(float p_DeltaTime)
@@ -43,6 +44,7 @@ void UPlayerHumanState_AssassinHA_C1_2::ExitState()
 	(m_CharPlayerHuman_Owner->GetCharacterMovement())->SetMovementMode(EMovementMode::MOVE_Walking, 0);
 	b_CanBreakOut = false;
 	m_CharPlayerHuman_Owner->SetArmLength_CameraFollow_01(0.0f, 2.0f);
+	m_CharPlayerHuman_Owner->ResetCapsuleSize(0.1f);
 }
 
 
@@ -107,6 +109,7 @@ void UPlayerHumanState_AssassinHA_C1_2::HandleAction_AnimNotify_01()
 {
 	if (!b_IsInState) return;
 	m_CharPlayerHuman_Owner->DisableRootMotionForTime(0.25f);
+	m_CharPlayerHuman_Owner->ResetCapsuleSize(0.1f);
 	b_CanBreakOut = true;
 }
 

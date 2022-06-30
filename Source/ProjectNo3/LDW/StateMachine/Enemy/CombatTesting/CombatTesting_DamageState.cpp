@@ -4,6 +4,7 @@
 #include "CombatTesting_DamageState.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Library/Library_CustomMath.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_FallState.h"
 
 
 /**
@@ -25,7 +26,7 @@ UCombatTesting_DamageState::UCombatTesting_DamageState()
 void UCombatTesting_DamageState::EnterState()
 {
 	Super::EnterState();
-	PlayDamageMontage();
+	HandleGetDamage();
 }
 
 void UCombatTesting_DamageState::TickState(float p_DeltaTime)
@@ -38,6 +39,20 @@ void UCombatTesting_DamageState::ExitState()
 	Super::ExitState();
 }
 
+void UCombatTesting_DamageState::HandleEndMontage()
+{
+	Super::HandleEndMontage();
+	if (m_Character_EnemyCombatTestingREF->b_IsInAir)
+	{
+		ChangeState(TEXT("CombatTesting_FallState"));
+	}
+	else
+	{
+		ChangeState(TEXT("CombatTesting_IdleState"));
+	}
+}
+
+
 
 
 
@@ -45,7 +60,7 @@ void UCombatTesting_DamageState::ExitState()
  * Private member functions
  */
 
-void UCombatTesting_DamageState::PlayDamageMontage()
+void UCombatTesting_DamageState::HandleGetDamage()
 {
 	if (m_AttackDefinitionREF == nullptr || !m_AttackDefinitionREF->CheckValid()) return;
 
@@ -82,7 +97,8 @@ void UCombatTesting_DamageState::PlayDamageMontage()
 	// Calculated angle to play montage using RotatorDamageDirection
 	float DamageAngle = ULibrary_CustomMath::TwoVectorsAngle_Degrees180(UKismetMathLibrary::GetForwardVector(m_Character_EnemyCombatTestingREF->GetActorRotation()), UKismetMathLibrary::GetForwardVector(RotatorDamageDirection));
 
-	// Display damage montage (with 4 direction F, B, L, R) via DamageAngle
+	// Front, Back, Left and Right attack direction
+		// Display damage montage (with 4 direction F, B, L, R) via DamageAngle
 	FString DirectionString;
 	FString MontageIDString;
 	if (DamageAngle >= -45.0f && DamageAngle <= 45.0f) DirectionString = TEXT("F");
@@ -107,11 +123,22 @@ void UCombatTesting_DamageState::PlayDamageMontage()
 		MontageIDString = TEXT("Damage_Push_") + DirectionString + TEXT("_01");
 		break;
 	}
-	case EHitType::Knock:
+	case EHitType::LowTakeDown:
 	{
+		MontageIDString = TEXT("Damage_TakeDown_Low_F_01");
 		break;
 	}
 	}
 
-	m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(MontageIDString));
+	// Check if attack state implementing control attacked position
+	if (m_AttackDefinitionREF->m_AttackerAttackStateREF->b_DoControlPostion == false)
+	{
+		m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(MontageIDString));
+	}
+	else
+	{
+		m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(MontageIDString), m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionTime);
+		FVector NextLocation = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(m_AttackDefinitionREF->m_AttackerActor, m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionOffset);
+		m_Character_EnemyCombatTestingREF->MoveToLocation(NextLocation, m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionTime);
+	}
 }

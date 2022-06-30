@@ -42,6 +42,11 @@ public:
 		TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjectTypes_Ground;
 
 	bool b_IsActive;
+	bool b_IsInAir;
+	float m_CurrentMovingSpeed;
+
+	FDelegate_EnemyBaseActionSignature m_Delegate_LandStart;
+
 
 protected:
 	// State machine
@@ -82,6 +87,7 @@ public:
 	ACharacter_EnemyBase();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 	// Get current state of m_StateMachine_01
 	UEnemyBaseState* GetCurrentState_EnemyBaseState();
@@ -116,5 +122,8 @@ private:
 	void InitTimelines();
 	// Tick timeline component in Tick()
 	void TickTimelines(float p_DeltaTime);
+
+	// Check and set values for b_IsInAir, m_CurrentMovingSpeed
+	void CalculateMovement();
 
 };

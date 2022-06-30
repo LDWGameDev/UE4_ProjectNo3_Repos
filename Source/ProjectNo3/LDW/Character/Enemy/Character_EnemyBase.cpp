@@ -4,6 +4,7 @@
 #include "Character_EnemyBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Library/Library_CustomMath.h"
 #include "System/CombatSystem/System_CombatContainer.h"
@@ -38,11 +39,21 @@ void ACharacter_EnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TickTimelines(DeltaTime);
+	CalculateMovement();
 }
 
 void ACharacter_EnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ACharacter_EnemyBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	if (m_Delegate_LandStart.IsBound())
+	{
+		m_Delegate_LandStart.Broadcast();
+	}
 }
 
 void ACharacter_EnemyBase::ActivateEnemy(bool p_DoActivate)
@@ -199,4 +210,10 @@ void ACharacter_EnemyBase::TickTimelines(float p_DeltaTime)
 	m_Timeline_LocationControl.TickTimeline(p_DeltaTime);
 	m_Timeline_RotationControl.TickTimeline(p_DeltaTime);
 	m_Timeline_CapsuleSizeControl.TickTimeline(p_DeltaTime);
+}
+
+void ACharacter_EnemyBase::CalculateMovement()
+{
+	b_IsInAir = GetCharacterMovement()->IsFalling();
+	m_CurrentMovingSpeed = GetVelocity().Size();
 }
