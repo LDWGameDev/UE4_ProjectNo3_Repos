@@ -39,13 +39,25 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool b_ShouldLocomotionAnimation;
 	UPROPERTY(BlueprintReadOnly)
+		bool b_IsSimulatingPhysics_KnockDown;
+	UPROPERTY(BlueprintReadOnly)
 		int32 m_AnimSetIndex;
+	UPROPERTY(BlueprintReadOnly)
+		float m_LeanForwardValue;
+	UPROPERTY(BlueprintReadOnly)
+		float m_LeanRightValue;
 
 	// Control Rig usage
 	UPROPERTY(BlueprintReadOnly)
 		bool b_DoFeetIK;
 	UPROPERTY(BlueprintReadOnly)
 		float m_ControlRigFootIKAlpha;
+
+protected:
+private:
+	float m_SavedLastFrameMovingSpeed;
+
+
 
 /**
  * Functions

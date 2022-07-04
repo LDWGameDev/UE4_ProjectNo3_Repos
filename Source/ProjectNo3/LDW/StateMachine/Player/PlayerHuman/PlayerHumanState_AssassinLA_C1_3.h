@@ -28,8 +28,9 @@ private:
 	const float c_CooldownTime = 1.0f;
 	const float c_AdditionalArmLength = -80.0f;
 	const FVector c_SocketOffset = FVector(0.0f, 100.0f, 0.0f);
-	FStruct_AttackStateDefinition m_AttackStateDefinition_01 = FStruct_AttackStateDefinition(EHitType::LightAttack, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
-	FStruct_AttackStateDefinition m_AttackStateDefinition_02 = FStruct_AttackStateDefinition(EHitType::Knock, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
+	FStruct_AttackStateDefinition m_AttackStateDefinition_01 = FStruct_AttackStateDefinition(EHitType::LightPush, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
+	FStruct_AttackStateDefinition m_AttackStateDefinition_02 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
+	FStruct_AttackStateDefinition m_AttackStateDefinition_03 = FStruct_AttackStateDefinition(EHitType::KnockSimulate, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
 
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_01;
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_02;

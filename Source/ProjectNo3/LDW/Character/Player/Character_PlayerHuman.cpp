@@ -27,7 +27,11 @@ ACharacter_PlayerHuman::ACharacter_PlayerHuman()
 	bUseControllerRotationRoll = false;
 	
 	// CapsuleComponent defaults
-	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(c_DefaultCapsuleRadius, c_DefaultCapsuleHalfHeight);
+
+	// SkeletalMesh defaults
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -c_DefaultCapsuleHalfHeight));
+	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
 	// CharacterMovementt defaults
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -196,7 +200,15 @@ void ACharacter_PlayerHuman::RotateToFaceTarget(const AActor* p_ActorToFace, flo
 
 bool ACharacter_PlayerHuman::PlayMontageFromTable(const FName& p_MontageID)
 {
-	FStruct_MontageToPlay* MontageToPlay = m_DataTable_Montages->FindRow<FStruct_MontageToPlay>(p_MontageID, "");
+	FStruct_MontageToPlay* MontageToPlay = m_DataTable_ActionMontages->FindRow<FStruct_MontageToPlay>(p_MontageID, "");
+	if (MontageToPlay == nullptr || MontageToPlay->m_AnimMontage == nullptr) return false;
+	PlayAnimMontage(MontageToPlay->m_AnimMontage);
+	return true;
+}
+
+bool ACharacter_PlayerHuman::PlayMontageFromTable_DamageMontages(const FName& p_MontageID)
+{
+	FStruct_MontageToPlay* MontageToPlay = m_DataTable_DamageMontages->FindRow<FStruct_MontageToPlay>(p_MontageID, "");
 	if (MontageToPlay == nullptr || MontageToPlay->m_AnimMontage == nullptr) return false;
 	PlayAnimMontage(MontageToPlay->m_AnimMontage);
 	return true;
@@ -325,6 +337,29 @@ AActor* ACharacter_PlayerHuman::FindClosetTargetToAttack(const FVector& p_Offset
 	return FindClosetActor_SphereCheck(p_OffsetPositionToCheck, p_RadiusToCheck, m_ObjectTypes_ClosetTargetToAttack, m_TagContainer_ClosetTargetToAttack);
 }
 
+void ACharacter_PlayerHuman::SetCapsuleSize(float p_NewCapsuleHalfHeight, float p_NewCapsuleRadius, float p_BlendTime)
+{
+	if (p_NewCapsuleHalfHeight <= 0.0f || p_NewCapsuleRadius <= 0.0f) return;
+	m_SavedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	m_SavedCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+	m_SavedNewCapsuleHalfHeight = p_NewCapsuleHalfHeight;
+	m_SavedNewCapsuleRadius = p_NewCapsuleRadius;
+	if (p_BlendTime <= 0)
+	{
+		GetCapsuleComponent()->SetCapsuleSize(p_NewCapsuleRadius, p_NewCapsuleHalfHeight, true);
+		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -p_NewCapsuleHalfHeight));
+	}
+	else
+	{
+		m_Timeline_CapsuleSizeControl.SetPlayRate(1.0f / p_BlendTime);
+		m_Timeline_CapsuleSizeControl.PlayFromStart();
+	}
+}
+
+void ACharacter_PlayerHuman::ResetCapsuleSize(float p_BlendTime)
+{
+	SetCapsuleSize(c_DefaultCapsuleHalfHeight, c_DefaultCapsuleRadius, p_BlendTime);
+}
 
 
 
@@ -350,7 +385,7 @@ void ACharacter_PlayerHuman::InitStateMachine()
 	auto* AvailableStatesList = m_StateMachine_01->GetAvailableStatesList();
 	if (AvailableStatesList == nullptr) return;
 
-	AvailableStatesList->Reserve(26);
+	AvailableStatesList->Reserve(28);
 
 	m_UnarmedIdleState = NewObject<UPlayerHumanState_UnarmedIdle>();
 	m_UnarmedIdleState->InitState_PlayerHuman(this, m_StateMachine_01);
@@ -404,6 +439,10 @@ void ACharacter_PlayerHuman::InitStateMachine()
 	m_AssassinHeavyAttack_C3_1->InitState_PlayerHuman(this, m_StateMachine_01);
 	m_AssassinHeavyAttack_C3_2 = NewObject<UPlayerHumanState_AssassinHA_C3_2>();
 	m_AssassinHeavyAttack_C3_2->InitState_PlayerHuman(this, m_StateMachine_01);
+	m_AssassinGetUp = NewObject<UPlayerHumanState_AssGetUp>();
+	m_AssassinGetUp->InitState_PlayerHuman(this, m_StateMachine_01);
+	m_AssassinDamage_KnockDown = NewObject<UPlayerHumanState_AssKnockDown>();
+	m_AssassinDamage_KnockDown->InitState_PlayerHuman(this, m_StateMachine_01);
 
 	AvailableStatesList->Add(m_UnarmedIdleState);
 	AvailableStatesList->Add(m_UnarmedJogState);
@@ -431,6 +470,8 @@ void ACharacter_PlayerHuman::InitStateMachine()
 	AvailableStatesList->Add(m_AssassinHeavyAttack_C2_4);
 	AvailableStatesList->Add(m_AssassinHeavyAttack_C3_1);
 	AvailableStatesList->Add(m_AssassinHeavyAttack_C3_2);
+	AvailableStatesList->Add(m_AssassinGetUp);
+	AvailableStatesList->Add(m_AssassinDamage_KnockDown);
 }
 
 void ACharacter_PlayerHuman::HandleOnPossessed(AController* p_Controller)
@@ -560,6 +601,18 @@ void ACharacter_PlayerHuman::InitTimelines()
 	m_Timeline_WeaponBuff_01.SetLooping(false);
 
 
+	// Create timeline handles capsule component size
+	FOnTimelineFloatStatic OnTimelineFloat_CapsuleSizeControl_01;
+	OnTimelineFloat_CapsuleSizeControl_01.BindLambda([&](float p_Value)
+		{
+			float HalfHeight = FMath::Lerp(m_SavedCapsuleHalfHeight, m_SavedNewCapsuleHalfHeight, p_Value);
+			float Radius = FMath::Lerp(m_SavedCapsuleRadius, m_SavedNewCapsuleRadius, p_Value);
+			GetCapsuleComponent()->SetCapsuleSize(Radius, HalfHeight, true);
+			GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -HalfHeight));
+		});
+	m_Timeline_CapsuleSizeControl.AddInterpFloat(m_CurveFloat_EaseInOutAlpha, OnTimelineFloat_CapsuleSizeControl_01);
+	m_Timeline_CapsuleSizeControl.SetTimelineLength(1.0f);
+	m_Timeline_CapsuleSizeControl.SetLooping(false);
 }
 
 void ACharacter_PlayerHuman::TimelineTicks(float p_DeltaTime)
@@ -568,6 +621,7 @@ void ACharacter_PlayerHuman::TimelineTicks(float p_DeltaTime)
 	m_Timeline_Rotation.TickTimeline(p_DeltaTime);
 	m_Timeline_CameraFollow_01.TickTimeline(p_DeltaTime);
 	m_Timeline_WeaponBuff_01.TickTimeline(p_DeltaTime);
+	m_Timeline_CapsuleSizeControl.TickTimeline(p_DeltaTime);
 }
 
 void ACharacter_PlayerHuman::EnableRootMotion()
@@ -628,14 +682,25 @@ void ACharacter_PlayerHuman::HandleDelegate_ReturnViewTarget()
 
 
 
-void ACharacter_PlayerHuman::TestFunction(AActor* p_EnemyActor)
+void ACharacter_PlayerHuman::TestFunction(int32 p_CommandIndex)
 {
-	IInterface_Attackable* IAttackable = Cast<IInterface_Attackable>(p_EnemyActor);
-	if (IAttackable != nullptr)
+	switch (p_CommandIndex)
 	{
-		FStruct_AttackStateDefinition AttackState = FStruct_AttackStateDefinition(EHitType::LightAttack, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
-		FStruct_AttackDefinition AttackDefinition = FStruct_AttackDefinition(this, this, &AttackState, nullptr);
-		IAttackable->TakeHit(AttackDefinition);
+	case 0:
+	{
+		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinKnockDown"));
+		break;
+	}
+	case 1:
+	{
+		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinGetUp"));
+		break;
+	}
+	case 2:
+	{
+		m_StateMachine_01->ChangeState(TEXT("PlayerHumanState_AssassinHA_C1_1"));
+		break;
+	}
 	}
 }
 

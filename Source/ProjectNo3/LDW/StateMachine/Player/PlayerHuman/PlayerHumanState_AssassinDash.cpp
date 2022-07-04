@@ -143,9 +143,7 @@ void UPlayerHumanState_AssassinDash::HandleAction_AnimNotify_01()
 
 void UPlayerHumanState_AssassinDash::HandleAction_DashStart()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DashState HandleDashStart triggered"));
 	if (!b_IsInState) return;
-	UE_LOG(LogTemp, Warning, TEXT("DashState DashInput Triggered"));
 	b_HasTriggerDashInput = true;
 }
 

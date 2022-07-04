@@ -32,6 +32,8 @@
 #include "PlayerHuman/PlayerHumanState_AssassinHA_C2_4.h"
 #include "PlayerHuman/PlayerHumanState_AssassinHA_C3_1.h"
 #include "PlayerHuman/PlayerHumanState_AssassinHA_C3_2.h"
+#include "PlayerHuman/PlayerHumanState_AssGetUp.h"
+#include "PlayerHuman/PlayerHumanState_AssKnockDown.h"
 
 
 

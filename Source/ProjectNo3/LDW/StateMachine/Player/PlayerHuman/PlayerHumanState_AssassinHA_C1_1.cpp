@@ -6,6 +6,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Library/Library_CustomMath.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 
 UPlayerHumanState_AssassinHA_C1_1::UPlayerHumanState_AssassinHA_C1_1()
 {
@@ -34,6 +36,7 @@ UPlayerHumanState_AssassinHA_C1_1::UPlayerHumanState_AssassinHA_C1_1()
 void UPlayerHumanState_AssassinHA_C1_1::EnterState()
 {
 	Super::EnterState();
+	RotateToClosetTarget();
 	(m_CharPlayerHuman_Owner->GetCharacterMovement())->SetMovementMode(EMovementMode::MOVE_Flying, 0);
 	m_CharPlayerHuman_Owner->PlayMontageFromTable(FName("Assassin_HeavyAttack_C1_1"));
 	SetCameraFollow_01(c_AdditionArmLength, c_SocketOffset, 0.6f, -20.0f, 60.0f, FVector(0.0f, -45.0f, 0.0f), FVector(0.0f, -45.0f, 0.0f));
@@ -77,6 +80,8 @@ void UPlayerHumanState_AssassinHA_C1_1::BindInputHandlingFunctions(AController* 
 	m_AnimNotify_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_AnimNotify_01);
 	m_AnimNotify_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_AnimNotify_02);
 	m_EndAttack_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndAttack_01);
+	m_TriggerAttack_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_01);
+	m_TriggerAttack_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_02);
 
 	if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleAction_MoveForward);
 	if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleAction_MoveRight);
@@ -84,7 +89,8 @@ void UPlayerHumanState_AssassinHA_C1_1::BindInputHandlingFunctions(AController* 
 	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleAction_AnimNotify_01);
 	if (m_AnimNotify_02_DelegateREF != nullptr) m_AnimNotify_02_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleAction_AnimNotify_02);
 	if (m_EndAttack_01_DelegateREF != nullptr) m_EndAttack_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleAction_EndAttack_01);
-
+	if (m_TriggerAttack_01_DelegateREF != nullptr) m_TriggerAttack_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_01);
+	if (m_TriggerAttack_02_DelegateREF != nullptr) m_TriggerAttack_02_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_02);
 }
 
 void UPlayerHumanState_AssassinHA_C1_1::UnBindInputHandlingFunctions()
@@ -96,6 +102,8 @@ void UPlayerHumanState_AssassinHA_C1_1::UnBindInputHandlingFunctions()
 	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->RemoveAll(this);
 	if (m_AnimNotify_02_DelegateREF != nullptr) m_AnimNotify_02_DelegateREF->RemoveAll(this);
 	if (m_EndAttack_01_DelegateREF != nullptr) m_EndAttack_01_DelegateREF->RemoveAll(this);
+	if (m_TriggerAttack_01_DelegateREF != nullptr) m_TriggerAttack_01_DelegateREF->RemoveAll(this);
+	if (m_TriggerAttack_02_DelegateREF != nullptr) m_TriggerAttack_02_DelegateREF->RemoveAll(this);
 
 	m_MoveForward_DelegateREF = nullptr;
 	m_MoveRight_DelegateREF = nullptr;
@@ -103,7 +111,8 @@ void UPlayerHumanState_AssassinHA_C1_1::UnBindInputHandlingFunctions()
 	m_AnimNotify_01_DelegateREF = nullptr;
 	m_AnimNotify_02_DelegateREF = nullptr;
 	m_EndAttack_01_DelegateREF = nullptr;
-
+	m_TriggerAttack_01_DelegateREF = nullptr;
+	m_TriggerAttack_02_DelegateREF = nullptr;
 }
 
 
@@ -153,4 +162,16 @@ void UPlayerHumanState_AssassinHA_C1_1::HandleAction_EndAttack_01()
 		ChangeState("PlayerHumanState_AssassinJog");
 	}
 	else ChangeState("PlayerHumanState_AssassinIdle");
+}
+
+void UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_01()
+{
+	if (!b_IsInState) return;
+	CheckForHittingTarget(m_Hitboxes_01, m_AttackStateDefinition_01, false);
+}
+
+void UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_02()
+{
+	if (!b_IsInState) return;
+	CheckForHittingTarget(m_Hitboxes_02, m_AttackStateDefinition_02, false);
 }

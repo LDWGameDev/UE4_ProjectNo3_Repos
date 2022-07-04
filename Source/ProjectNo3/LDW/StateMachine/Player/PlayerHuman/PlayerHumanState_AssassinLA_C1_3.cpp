@@ -159,11 +159,11 @@ void UPlayerHumanState_AssassinLA_C1_3::HandleAction_TriggerAttack_01()
 void UPlayerHumanState_AssassinLA_C1_3::HandleAction_TriggerAttack_02()
 {
 	if (!b_IsInState) return;
-	CheckForHittingTarget(m_Hitboxes_02, m_AttackStateDefinition_01);
+	CheckForHittingTarget(m_Hitboxes_02, m_AttackStateDefinition_02);
 }
 
 void UPlayerHumanState_AssassinLA_C1_3::HandleAction_TriggerAttack_03()
 {
 	if (!b_IsInState) return;
-	CheckForHittingTarget(m_Hitboxes_03, m_AttackStateDefinition_02);
+	CheckForHittingTarget(m_Hitboxes_03, m_AttackStateDefinition_03);
 }

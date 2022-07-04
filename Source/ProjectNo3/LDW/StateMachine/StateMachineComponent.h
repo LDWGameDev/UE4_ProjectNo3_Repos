@@ -36,7 +36,7 @@ private:
 	UPROPERTY()
 		TArray<UBaseState*> m_AvailableStatesList;
 	const int m_NumberHistoryStates = 10;
-	const float m_MinStateTime = 0.1f;
+	const float m_MinStateTime = 0.0f;
 
 
 

@@ -26,6 +26,7 @@ void UPlayerHumanState_AssassinHA_C1_2::EnterState()
 	(m_CharPlayerHuman_Owner->GetCharacterMovement())->SetMovementMode(EMovementMode::MOVE_Flying, 0);
 	m_CharPlayerHuman_Owner->PlayMontageFromTable(FName(TEXT("Assassin_HeavyAttack_C1_2")));
 	SetCameraFollow_01(c_AdditionArmLength, c_SocketOffset, 1.0f, -10.0f, 60.0f, FVector(0.0f, -40.0f, 0.0f), FVector(0.0f, -40.0f, 0.0f));
+	m_CharPlayerHuman_Owner->SetCapsuleSize(96.0f, 8.0f, 0.1f);
 }
 
 void UPlayerHumanState_AssassinHA_C1_2::TickState(float p_DeltaTime)
@@ -43,6 +44,7 @@ void UPlayerHumanState_AssassinHA_C1_2::ExitState()
 	(m_CharPlayerHuman_Owner->GetCharacterMovement())->SetMovementMode(EMovementMode::MOVE_Walking, 0);
 	b_CanBreakOut = false;
 	m_CharPlayerHuman_Owner->SetArmLength_CameraFollow_01(0.0f, 2.0f);
+	m_CharPlayerHuman_Owner->ResetCapsuleSize(0.1f);
 }
 
 
@@ -60,12 +62,14 @@ void UPlayerHumanState_AssassinHA_C1_2::BindInputHandlingFunctions(AController* 
 	m_MoveForward_DelegateREF = IPlayerInput->GetDelegate_MoveForward();
 	m_MoveRight_DelegateREF = IPlayerInput->GetDelegate_MoveRight();
 	m_AnimNotify_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_AnimNotify_01);
-	m_EndAttack_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndAttack_02);
+	m_EndAttack_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndAttack_02); 
+	m_TriggerAttack_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_01);
 
 	if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_MoveForward);
 	if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_MoveRight);
 	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_AnimNotify_01);
 	if (m_EndAttack_02_DelegateREF != nullptr) m_EndAttack_02_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_EndAttack_02);
+	if (m_TriggerAttack_01_DelegateREF != nullptr) m_TriggerAttack_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleTriggerAttack_01);
 
 }
 
@@ -81,7 +85,6 @@ void UPlayerHumanState_AssassinHA_C1_2::UnBindInputHandlingFunctions()
 	m_MoveRight_DelegateREF = nullptr;
 	m_AnimNotify_01_DelegateREF = nullptr;
 	m_EndAttack_02_DelegateREF = nullptr;
-
 }
 
 
@@ -107,6 +110,7 @@ void UPlayerHumanState_AssassinHA_C1_2::HandleAction_AnimNotify_01()
 {
 	if (!b_IsInState) return;
 	m_CharPlayerHuman_Owner->DisableRootMotionForTime(0.25f);
+	m_CharPlayerHuman_Owner->ResetCapsuleSize(0.1f);
 	b_CanBreakOut = true;
 }
 
@@ -120,4 +124,10 @@ void UPlayerHumanState_AssassinHA_C1_2::HandleAction_EndAttack_02()
 		ChangeState("PlayerHumanState_AssassinJog");
 	}
 	else ChangeState("PlayerHumanState_AssassinIdle");
+}
+
+void UPlayerHumanState_AssassinHA_C1_2::HandleTriggerAttack_01()
+{
+	if (!b_IsInState) return;
+	CheckForHittingTarget(m_Hitboxes_01, m_AttackState_01, false);
 }

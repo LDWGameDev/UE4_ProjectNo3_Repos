@@ -100,7 +100,6 @@ bool UBaseState::CheckForHoldingAfterExit(float p_TimeToCheck)
 
 
 
-
 /**
  * Protected member functions
  */
