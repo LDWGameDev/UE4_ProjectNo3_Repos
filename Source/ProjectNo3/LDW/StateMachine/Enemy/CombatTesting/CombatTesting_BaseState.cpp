@@ -41,7 +41,6 @@ void UCombatTesting_BaseState::InitState(UStateMachineComponent* p_StateMachineR
 {
 	Super::InitState(p_StateMachineREF, p_CharacterEnemeyREF);
 	m_Character_EnemyCombatTestingREF = Cast<ACharacter_Enemy_CombatTesting>(p_CharacterEnemeyREF);
-
 }
 
 

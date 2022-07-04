@@ -6,6 +6,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Library/Library_CustomMath.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 
 UPlayerHumanState_AssassinHA_C1_1::UPlayerHumanState_AssassinHA_C1_1()
 {
@@ -166,7 +168,6 @@ void UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_01()
 {
 	if (!b_IsInState) return;
 	CheckForHittingTarget(m_Hitboxes_01, m_AttackStateDefinition_01, false);
-	
 }
 
 void UPlayerHumanState_AssassinHA_C1_1::HandleTriggerAttack_02()

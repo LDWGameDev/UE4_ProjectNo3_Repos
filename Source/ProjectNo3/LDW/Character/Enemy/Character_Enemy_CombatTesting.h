@@ -9,12 +9,13 @@
 #include "Character_Enemy_CombatTesting.generated.h"
 
 
-class UCombatTesting_DamageState;
 class UCombatTesting_IdleState;
 class UCombatTesting_KnockOutSimulate;
 class UCombatTesting_GetUpSimulate;
 class UCombatTesting_FallState;
-class UCombatTesting_DamageInAirState;
+class UCombatTesting_DamageGroundState;
+class UCombatTesting_DamageUpAndInAir;
+class UCombatTesting_GetUpState;
 
 /**
  * 
@@ -35,7 +36,7 @@ public:
 		UDataTable* m_DataTable_DamageMontages;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Custom EnemyCombatTesting")
-		FGameplayTagContainer m_TagContainer_StatesCanChangeToGetDamage;
+		FGameplayTagContainer m_TagContainer_StatesCannotTakeDamage;
 
 	// AnimInstance reference. Set value in BeginPlay()
 	UPROPERTY()
@@ -43,9 +44,9 @@ public:
 
 	// State references. Create and set values in InitStates()
 	UPROPERTY()
-		UCombatTesting_DamageState* m_DamageStateREF;
+		UCombatTesting_DamageGroundState* m_DamageGroundStateREF;
 	UPROPERTY()
-		UCombatTesting_DamageInAirState* m_DamageInAirStateREF;
+		UCombatTesting_DamageUpAndInAir* m_DamageInAirStateREF;
 	UPROPERTY()
 		UCombatTesting_IdleState* m_IdleStateREF;
 	UPROPERTY()
@@ -54,6 +55,8 @@ public:
 		UCombatTesting_GetUpSimulate* m_GetUpSimulateStateREF;
 	UPROPERTY()
 		UCombatTesting_FallState* m_FallStateREF;
+	UPROPERTY()
+		UCombatTesting_GetUpState* m_LandAndGetUpStateREF;
 
 protected:
 

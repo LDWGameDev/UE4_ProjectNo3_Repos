@@ -19,9 +19,8 @@ class PROJECTNO3_API UCombatTesting_GetUpState : public UCombatTesting_BaseState
  * Properties
  */
 public:
-	
+	int32 m_GetUpIndex;
 protected:
-	ACharacter_Enemy_CombatTesting* m_Character_EnemyCombatTestingREF;
 private:
 
 
@@ -34,8 +33,7 @@ public:
 	virtual void TickState(float p_DeltaTime) override;
 	virtual void ExitState() override;
 
-	// Override to get delegate reference and bind handling functions to delegates
-	virtual void InitState(UStateMachineComponent* p_StateMachineREF, AActor* p_CharacterEnemeyREF) override;
+	virtual void HandleEndMontage() override;
 
 protected:
 private:

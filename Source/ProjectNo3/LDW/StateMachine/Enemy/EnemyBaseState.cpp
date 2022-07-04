@@ -2,14 +2,19 @@
 
 
 #include "EnemyBaseState.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+
 
 /**
  * 
  */
+
 UEnemyBaseState::UEnemyBaseState()
 {
 
 }
+
 
 
 
@@ -20,6 +25,8 @@ UEnemyBaseState::UEnemyBaseState()
 void UEnemyBaseState::EnterState()
 {
 	Super::EnterState();
+	FString DisplayName = UKismetSystemLibrary::GetDisplayName(this);
+	UE_LOG(LogTemp, Warning, TEXT("EnemyBaseState - entered - %s"), *DisplayName);
 }
 
 void UEnemyBaseState::TickState(float p_DeltaTime)

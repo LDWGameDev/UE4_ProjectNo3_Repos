@@ -5,15 +5,13 @@
 #include "CoreMinimal.h"
 #include "CombatTesting_BaseState.h"
 #include "System/CombatSystem/System_CombatContainer.h"
-#include "CombatTesting_DamageInAirState.generated.h"
-
+#include "CombatTesting_DamageUpAndInAir.generated.h"
 
 /**
  * 
  */
-
 UCLASS()
-class PROJECTNO3_API UCombatTesting_DamageInAirState : public UCombatTesting_BaseState
+class PROJECTNO3_API UCombatTesting_DamageUpAndInAir : public UCombatTesting_BaseState
 {
 	GENERATED_BODY()
 	
@@ -31,7 +29,7 @@ private:
  * Functions
  */
 public:
-	UCombatTesting_DamageInAirState();
+	UCombatTesting_DamageUpAndInAir();
 	virtual void EnterState() override;
 	virtual void TickState(float p_DeltaTime) override;
 	virtual void ExitState() override;

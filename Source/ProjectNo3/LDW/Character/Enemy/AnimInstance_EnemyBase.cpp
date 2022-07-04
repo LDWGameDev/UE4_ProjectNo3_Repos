@@ -3,7 +3,9 @@
 
 #include "AnimInstance_EnemyBase.h"
 #include "Character/Enemy/Character_EnemyBase.h"
+#include "GameplayTagContainer.h"
 #include "StateMachine/Enemy/EnemyBaseState.h"
+
 
 
 /**
@@ -14,6 +16,7 @@ void UAnimInstance_EnemyBase::NativeBeginPlay()
 {
 	m_CharacterREF_EnemyBase = Cast<ACharacter_EnemyBase>(TryGetPawnOwner());
 }
+
 
 
 

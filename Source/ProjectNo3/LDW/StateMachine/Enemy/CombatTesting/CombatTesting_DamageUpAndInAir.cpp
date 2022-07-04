@@ -1,39 +1,46 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CombatTesting_DamageInAirState.h"
+#include "CombatTesting_DamageUpAndInAir.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Library/Library_CustomMath.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_FallState.h"
 
 
 /**
- * 
+ *
  */
 
-UCombatTesting_DamageInAirState::UCombatTesting_DamageInAirState()
+UCombatTesting_DamageUpAndInAir::UCombatTesting_DamageUpAndInAir()
 {
-	m_StateID = TEXT("CombatTesting_DamageInAirState");
-	m_StateGameplayTag = FGameplayTag::RequestGameplayTag(FName(TEXT("StateMachine.EnemyState.CombatTesting.Action.Damage.DamageInAir")), false);
+	m_StateID = TEXT("CombatTesting_DamageUpAndInAirState");
+	m_StateGameplayTag = FGameplayTag::RequestGameplayTag(FName(TEXT("StateMachine.EnemyState.CombatTesting.Action.Damage.DamageUpAndInAir")), false);
 }
 
 
-void UCombatTesting_DamageInAirState::EnterState()
+
+
+/**
+ * Override functions
+ */
+
+void UCombatTesting_DamageUpAndInAir::EnterState()
 {
 	Super::EnterState();
 	PlayDamageMontage();
 }
 
-void UCombatTesting_DamageInAirState::TickState(float p_DeltaTime)
+void UCombatTesting_DamageUpAndInAir::TickState(float p_DeltaTime)
 {
 	Super::TickState(p_DeltaTime);
 }
 
-void UCombatTesting_DamageInAirState::ExitState()
+void UCombatTesting_DamageUpAndInAir::ExitState()
 {
 	Super::ExitState();
 }
 
-void UCombatTesting_DamageInAirState::HandleEndMontage()
+void UCombatTesting_DamageUpAndInAir::HandleEndMontage()
 {
 	Super::HandleEndMontage();
 	if (m_Character_EnemyCombatTestingREF->b_IsInAir)
@@ -53,14 +60,10 @@ void UCombatTesting_DamageInAirState::HandleEndMontage()
  * Private member functions
  */
 
-void UCombatTesting_DamageInAirState::PlayDamageMontage()
+void UCombatTesting_DamageUpAndInAir::PlayDamageMontage()
 {
 	if (m_AttackDefinitionREF == nullptr || !m_AttackDefinitionREF->CheckValid()) return;
-	if (m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting != nullptr)
-	{
-		m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->m_FallingIndex = 1;
-	}
-
+	if (m_Character_EnemyCombatTestingREF->m_FallStateREF != nullptr)m_Character_EnemyCombatTestingREF->m_FallStateREF->SetFallingIndex(1);
 	// Knock up no simulate
 	if (m_AttackDefinitionREF->m_AttackerAttackStateREF->b_DoControlPostion == true)
 	{
@@ -74,3 +77,4 @@ void UCombatTesting_DamageInAirState::PlayDamageMontage()
 		// Play knock up AnimMontage has root motion to drive character up
 	}
 }
+

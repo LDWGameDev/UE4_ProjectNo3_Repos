@@ -10,12 +10,17 @@
 #include "TimerManager.h"
 
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_IdleState.h"
-#include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageState.h"
-#include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageInAirState.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageGroundState.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_DamageUpAndInAir.h"
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_KnockOutSimulate.h"
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_GetUpSimulate.h"
 #include "StateMachine/Enemy/CombatTesting/CombatTesting_FallState.h"
+#include "StateMachine/Enemy/CombatTesting/CombatTesting_GetUpState.h"
 #include "Library/Library_CustomMath.h"
+
+
+#include "Kismet/KismetSystemLibrary.h"
+
 
 
 /**
@@ -87,25 +92,47 @@ void ACharacter_Enemy_CombatTesting::ActivateEnemy(bool p_DoActivate)
 void ACharacter_Enemy_CombatTesting::TakeHit(FStruct_AttackDefinition& p_AttackDefinition)
 {
 	Super::TakeHit(p_AttackDefinition);
+
 	if (m_StateMachine_01 == nullptr || !p_AttackDefinition.CheckValid()) return;
 	// Check current state
-	if (!m_TagContainer_StatesCanChangeToGetDamage.IsValid() || m_StateMachine_01->GetCurrentState() == nullptr || !m_StateMachine_01->GetCurrentState()->GetStateTag()->IsValid() ||
-		!m_StateMachine_01->GetCurrentState()->GetStateTag()->MatchesAny(m_TagContainer_StatesCanChangeToGetDamage)) return;
+
+	//if (m_StateMachine_01->GetCurrentState() == nullptr)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("CombatTesting - TakeHit() - CurrentState is null"));
+	//}
+	//else if (m_StateMachine_01->GetCurrentState()->GetStateTag() == nullptr)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("CombatTesting - TakeHit() - StateTag is null"));
+	//}
+	//else if (m_StateMachine_01->GetCurrentState()->GetStateTag()->IsValid() == false)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("CombatTesting - TakeHit() - StateTag not valid"));
+	//}
+	//else if (m_StateMachine_01->GetCurrentState()->GetStateTag()->MatchesAny(m_TagContainer_StatesCannotTakeDamage) == true) 
+	//{
+	//	FString CurrentState = UKismetSystemLibrary::GetDisplayName(m_StateMachine_01->GetCurrentState());
+	//	UE_LOG(LogTemp, Warning, TEXT("CombatTesting - TakeHit() - State cannot take damage"));
+	//	UE_LOG(LogTemp, Warning, TEXT("CombatTesting - TakeHit() - Current state: %s"), *CurrentState);
+	//}
+
+	if (m_StateMachine_01->GetCurrentState() == nullptr || !m_StateMachine_01->GetCurrentState()->GetStateTag()->IsValid() || m_StateMachine_01->GetCurrentState()->GetStateTag()->MatchesAny(m_TagContainer_StatesCannotTakeDamage)) return;
+	//UE_LOG(LogTemp, Warning, TEXT("CombatTesting - TakeHit() - Conditions valid"));
 
 	if (p_AttackDefinition.m_AttackerAttackStateREF->m_HitType == EHitType::KnockSimulate)
 	{
 		m_KnockOutSimulateStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
 		m_StateMachine_01->ChangeState(TEXT("CombatTesting_KnockOutSimulateState"));
+
 	}
 	else if(p_AttackDefinition.m_AttackerAttackStateREF->m_AttackDirection == EDirectionAttack6Ways::Up)
 	{
 		m_DamageInAirStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
-		m_StateMachine_01->ChangeState(TEXT("CombatTesting_DamageInAirState"));
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_DamageUpAndInAirState"));
 	}
 	else
 	{
-		m_DamageStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
-		m_StateMachine_01->ChangeState(TEXT("CombatTesting_LightDamageState"));
+		m_DamageGroundStateREF->m_AttackDefinitionREF = &p_AttackDefinition;
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_DamageGroundState"));
 	}
 }
 
@@ -149,27 +176,30 @@ void ACharacter_Enemy_CombatTesting::InitStates()
 {
 	if (m_StateMachine_01 == nullptr || m_StateMachine_01->GetAvailableStatesList() == nullptr) return;
 	auto* StatesListREF = m_StateMachine_01->GetAvailableStatesList();
-	StatesListREF->Reserve(5);
+	StatesListREF->Reserve(7);
 
 	m_IdleStateREF = NewObject<UCombatTesting_IdleState>();
 	m_IdleStateREF->InitState(m_StateMachine_01, this);
-	m_DamageStateREF = NewObject<UCombatTesting_DamageState>();
-	m_DamageStateREF->InitState(m_StateMachine_01, this);
+	m_DamageGroundStateREF = NewObject<UCombatTesting_DamageGroundState>();
+	m_DamageGroundStateREF->InitState(m_StateMachine_01, this);
+	m_DamageInAirStateREF = NewObject<UCombatTesting_DamageUpAndInAir>();
+	m_DamageInAirStateREF->InitState(m_StateMachine_01, this);
 	m_KnockOutSimulateStateREF = NewObject<UCombatTesting_KnockOutSimulate>();
 	m_KnockOutSimulateStateREF->InitState(m_StateMachine_01, this);
 	m_GetUpSimulateStateREF = NewObject<UCombatTesting_GetUpSimulate>();
 	m_GetUpSimulateStateREF->InitState(m_StateMachine_01, this);
 	m_FallStateREF = NewObject<UCombatTesting_FallState>();
 	m_FallStateREF->InitState(m_StateMachine_01, this);
-	m_DamageInAirStateREF = NewObject<UCombatTesting_DamageInAirState>();
-	m_DamageInAirStateREF->InitState(m_StateMachine_01, this);
+	m_LandAndGetUpStateREF = NewObject<UCombatTesting_GetUpState>();
+	m_LandAndGetUpStateREF->InitState(m_StateMachine_01, this);
 
 	StatesListREF->Add(m_IdleStateREF);
-	StatesListREF->Add(m_DamageStateREF);
+	StatesListREF->Add(m_DamageGroundStateREF);
+	StatesListREF->Add(m_DamageInAirStateREF);
 	StatesListREF->Add(m_KnockOutSimulateStateREF);
 	StatesListREF->Add(m_GetUpSimulateStateREF);
 	StatesListREF->Add(m_FallStateREF);
-	StatesListREF->Add(m_DamageInAirStateREF);
+	StatesListREF->Add(m_LandAndGetUpStateREF);
 }
 
 void ACharacter_Enemy_CombatTesting::HandleDelegate_ChangeState()
@@ -192,18 +222,18 @@ void ACharacter_Enemy_CombatTesting::TestFunction(int32 p_CommandIndex)
 	{
 	case 0:
 	{
-		m_StateMachine_01->ChangeState((TEXT("CombatTesting_KnockOutSimulateState")));
+		m_StateMachine_01->ChangeState((TEXT("CombatTesting_FallState")));
 		break;
 	}
 	case 1:
 	{
-		m_StateMachine_01->ChangeState((TEXT("CombatTesting_GetUpSimulateState")));
+		m_LandAndGetUpStateREF->m_GetUpIndex = 1;
+		m_StateMachine_01->ChangeState((TEXT("CombatTesting_LandAndGetUpState")));
 		break;
 	}
 	case 2:
 	{
-		FVector NextLocation = GetActorLocation() + FVector(0.0f, 0.0f, 150.0f);
-		MoveToLocation(NextLocation, 2.0f);
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_KnockOutSimulateState"));
 		break;
 	}
 	}

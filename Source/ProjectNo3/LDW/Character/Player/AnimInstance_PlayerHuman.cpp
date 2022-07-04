@@ -20,13 +20,28 @@ void UAnimInstance_PlayerHuman::NativeInitializeAnimation()
 	b_ShouldLocomotionAnimation = true;
 	b_IsInAir = false;
 	b_DoFeetIK = false;
+	m_LeanForwardValue = 0.0f;
+	m_LeanRightValue = 0.0;
+	m_SavedMovingDirectionAngle = 0.0f;
 }
 
 void UAnimInstance_PlayerHuman::NativeUpdateAnimation(float DeltaSeconds) 
 {
 	if (m_CharacterPlayerHuman_OwnerCharacter == nullptr || !b_HasInitializedAnimInstance) return;
+	m_SavedLastFrameMovingSpeed = m_MovingSpeed;
 	m_MovingSpeed = m_CharacterPlayerHuman_OwnerCharacter->GetMovingSpeed();
 	m_MovingDirectionAngle = CalculateDirection(m_CharacterPlayerHuman_OwnerCharacter->GetVelocity(), m_CharacterPlayerHuman_OwnerCharacter->GetActorRotation());
+	
+	if (b_ShouldLocomotionAnimation)
+	{
+		m_LeanForwardValue = FMath::FInterpTo(m_LeanForwardValue, m_MovingSpeed - m_SavedLastFrameMovingSpeed, DeltaSeconds, 5.0f);
+		m_LeanRightValue = FMath::FInterpTo(m_LeanRightValue, m_MovingDirectionAngle, DeltaSeconds, 8.0f);
+	}
+	else
+	{
+		m_LeanForwardValue = FMath::FInterpTo(m_LeanForwardValue, 0.0f, DeltaSeconds, 5.0f);
+		m_LeanRightValue = FMath::FInterpTo(m_LeanRightValue, 0.0f, DeltaSeconds, 8.0f);
+	}
 }
 
 

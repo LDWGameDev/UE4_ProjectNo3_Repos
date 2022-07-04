@@ -19,6 +19,7 @@ class PROJECTNO3_API UCombatTesting_FallState : public UCombatTesting_BaseState
  * Properties
  */
 public:
+	int32 m_FallingIndex;
 protected:
 private:
 	FDelegate_EnemyBaseActionSignature* m_LandStart_DelegateREF;
@@ -33,6 +34,8 @@ public:
 	virtual void TickState(float p_DeltaTime) override;
 	virtual void ExitState() override;
 	virtual void InitState(UStateMachineComponent* p_StateMachineREF, AActor* p_CharacterEnemeyREF) override;
+
+	void SetFallingIndex(int32 p_NewFallingIndex);
 
 protected:
 private:

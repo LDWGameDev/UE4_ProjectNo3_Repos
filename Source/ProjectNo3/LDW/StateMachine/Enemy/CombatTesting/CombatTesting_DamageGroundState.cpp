@@ -1,20 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CombatTesting_DamageState.h"
+#include "CombatTesting_DamageGroundState.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Library/Library_CustomMath.h"
-#include "StateMachine/Enemy/CombatTesting/CombatTesting_FallState.h"
 
 
 /**
- * 
+ *
  */
 
-UCombatTesting_DamageState::UCombatTesting_DamageState()
+UCombatTesting_DamageGroundState::UCombatTesting_DamageGroundState()
 {
-	m_StateID = TEXT("CombatTesting_LightDamageState");
-	m_StateGameplayTag = FGameplayTag::RequestGameplayTag(FName(TEXT("StateMachine.EnemyState.CombatTesting.Action.Damage.LightDamage")), false);
+	m_StateID = TEXT("CombatTesting_DamageGroundState");
+	m_StateGameplayTag = FGameplayTag::RequestGameplayTag(FName(TEXT("StateMachine.EnemyState.CombatTesting.Action.Damage.DamageGround")), false);
 }
 
 
@@ -23,23 +22,23 @@ UCombatTesting_DamageState::UCombatTesting_DamageState()
  * Override functions
  */
 
-void UCombatTesting_DamageState::EnterState()
+void UCombatTesting_DamageGroundState::EnterState()
 {
 	Super::EnterState();
 	HandleGetDamage();
 }
 
-void UCombatTesting_DamageState::TickState(float p_DeltaTime)
+void UCombatTesting_DamageGroundState::TickState(float p_DeltaTime)
 {
 	Super::TickState(p_DeltaTime);
 }
 
-void UCombatTesting_DamageState::ExitState()
+void UCombatTesting_DamageGroundState::ExitState()
 {
 	Super::ExitState();
 }
 
-void UCombatTesting_DamageState::HandleEndMontage()
+void UCombatTesting_DamageGroundState::HandleEndMontage()
 {
 	Super::HandleEndMontage();
 	if (m_Character_EnemyCombatTestingREF->b_IsInAir)
@@ -60,7 +59,7 @@ void UCombatTesting_DamageState::HandleEndMontage()
  * Private member functions
  */
 
-void UCombatTesting_DamageState::HandleGetDamage()
+void UCombatTesting_DamageGroundState::HandleGetDamage()
 {
 	if (m_AttackDefinitionREF == nullptr || !m_AttackDefinitionREF->CheckValid()) return;
 
@@ -142,3 +141,4 @@ void UCombatTesting_DamageState::HandleGetDamage()
 		m_Character_EnemyCombatTestingREF->MoveToLocation(NextLocation, m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionTime);
 	}
 }
+
