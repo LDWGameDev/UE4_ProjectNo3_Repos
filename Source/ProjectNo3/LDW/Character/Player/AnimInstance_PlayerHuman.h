@@ -15,9 +15,11 @@ class PROJECTNO3_API UAnimInstance_PlayerHuman : public UAnimInstance
 {
 	GENERATED_BODY()
 
+
 /**
  * Properties
  */
+
 public:
 	UPROPERTY(EditDefaultsOnly)
 		FGameplayTagContainer m_TagContainer_InAirStates;
@@ -62,6 +64,7 @@ private:
 /**
  * Functions
  */
+
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
@@ -69,27 +72,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Call Function")
 		void SetUpJogStop();
 
-	// Broad cast delegates in Character_PlayerHuman instance
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_EndMontage();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_EndMontage_02();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_AnimNotify_01();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_AnimNotify_02();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_AnimNotify_03();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_EndAttack_01();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_EndAttack_02();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_TriggerAttack_01();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_TriggerAttack_02();
-	UFUNCTION(BlueprintCallable, Category = "Call Function")
-		void BroadCastDelegate_TriggerAttack_03();
+	// Handle AnimNotify functions, implemented in CurrentState (casted to PlayerHuman_BaseState) of StateMachine
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_AnimNotify_01();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_AnimNotify_02();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_AnimNotify_03();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_TriggerAttack_01();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_TriggerAttack_02();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_TriggerAttack_03();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_TriggerAttack_04();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_TriggerAttack_05();
+	UFUNCTION(BlueprintCallable)
+		void HandleAnimNotify_EndMontage();
 
 	void CheckForCurrentState();
 

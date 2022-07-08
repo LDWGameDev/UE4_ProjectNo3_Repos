@@ -136,6 +136,7 @@ void UCombatTesting_DamageGroundState::HandleGetDamage()
 	}
 	else
 	{
+		m_Character_EnemyCombatTestingREF->DisableRootMotion(m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionTime);
 		m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(MontageIDString), m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionTime);
 		FVector NextLocation = ULibrary_CustomMath::WorldLocationOfRelativeLocationToActor(m_AttackDefinitionREF->m_AttackerActor, m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionOffset);
 		m_Character_EnemyCombatTestingREF->MoveToLocation(NextLocation, m_AttackDefinitionREF->m_AttackerAttackStateREF->m_ControlPositionTime);

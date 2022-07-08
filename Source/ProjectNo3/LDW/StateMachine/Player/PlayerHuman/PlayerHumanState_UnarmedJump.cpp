@@ -49,12 +49,10 @@ void UPlayerHumanState_UnarmedJump::BindInputHandlingFunctions(AController* p_Pl
 		m_MoveForwardDelegateREF = IPlayerInput->GetDelegate_MoveForward();
 		m_MoveRightDelegateREF = IPlayerInput->GetDelegate_MoveRight();
 		m_Landed_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_Landed);
-		m_EndMontage_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndMontage);
 
 		if (m_MoveForwardDelegateREF != nullptr) m_MoveForwardDelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedJump::HandleInput_MoveForward);
 		if (m_MoveRightDelegateREF != nullptr) m_MoveRightDelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedJump::HandleInput_MoveRight);
 		if (m_Landed_DelegateREF != nullptr) m_Landed_DelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedJump::HandleEvent_Landed);
-		if (m_EndMontage_DelegateREF != nullptr) m_EndMontage_DelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedJump::HandleEvent_EndAction);
 	}
 }
 
@@ -64,8 +62,24 @@ void UPlayerHumanState_UnarmedJump::UnBindInputHandlingFunctions()
 	if (m_MoveForwardDelegateREF != nullptr) m_MoveForwardDelegateREF->RemoveAll(this);
 	if (m_MoveRightDelegateREF != nullptr) m_MoveRightDelegateREF->RemoveAll(this);
 	if (m_Landed_DelegateREF != nullptr) m_MoveRightDelegateREF->RemoveAll(this);
-	if (m_EndMontage_DelegateREF != nullptr) m_EndMontage_DelegateREF->RemoveAll(this);
+
+	m_MoveForwardDelegateREF = nullptr;
+	m_MoveRightDelegateREF = nullptr;
+	m_Landed_DelegateREF = nullptr;
 }
+
+void UPlayerHumanState_UnarmedJump::HandleAnimNotify_EndMontage()
+{
+	Super::HandleAnimNotify_EndMontage();
+	ChangeState("PlayerHumanState_UnarmedFalling");
+}
+
+
+
+
+/**
+ * Private member functions
+ */
 
 void UPlayerHumanState_UnarmedJump::HandleInput_MoveForward(float p_AxisValue)
 {
@@ -85,10 +99,4 @@ void UPlayerHumanState_UnarmedJump::HandleEvent_Landed()
 	m_CharPlayerHuman_Owner->PlayMontageFromTable("Unarmed_Land_Additive");
 	if (FMath::Abs(m_MoveForwardValue) > 0.01f || (FMath::Abs(m_MoveRightValue) > 0.01f)) ChangeState("PlayerHumanState_UnarmedJog");
 	else ChangeState("PlayerHumanState_UnarmedIdle");
-}
-
-void UPlayerHumanState_UnarmedJump::HandleEvent_EndAction()
-{
-	if (!b_IsInState) return;
-	ChangeState("PlayerHumanState_UnarmedFalling");
 }

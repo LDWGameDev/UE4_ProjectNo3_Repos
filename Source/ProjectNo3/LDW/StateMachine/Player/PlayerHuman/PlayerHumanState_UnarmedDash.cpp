@@ -59,13 +59,9 @@ void UPlayerHumanState_UnarmedDash::BindInputHandlingFunctions(AController* p_Pl
 	{
 		m_MoveForward_DelegateREF = IPlayerInput->GetDelegate_MoveForward();
 		m_MoveRight_DelegateREF = IPlayerInput->GetDelegate_MoveRight();
-		m_EndMontage_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndMontage);
-		m_AnimNotify_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_AnimNotify_01);
 
 		if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedDash::HandleInput_MoveForward);
 		if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedDash::HandleInput_MoveRight);
-		if (m_EndMontage_DelegateREF != nullptr) m_EndMontage_DelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedDash::HandleAction_EndMontage);
-		if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->AddUObject(this, &UPlayerHumanState_UnarmedDash::HandleAction_AnimNotify_01);
 	}
 }
 
@@ -74,14 +70,31 @@ void UPlayerHumanState_UnarmedDash::UnBindInputHandlingFunctions()
 	Super::UnBindInputHandlingFunctions();
 	if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->RemoveAll(this);
 	if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->RemoveAll(this);
-	if (m_EndMontage_DelegateREF != nullptr) m_EndMontage_DelegateREF->RemoveAll(this);
-	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->RemoveAll(this);
 
 	m_MoveForward_DelegateREF = nullptr;
 	m_MoveRight_DelegateREF = nullptr;
-	m_EndMontage_DelegateREF = nullptr;
-	m_AnimNotify_01_DelegateREF = nullptr;
 }
+
+void UPlayerHumanState_UnarmedDash::HandleAnimNotify_AnimNotify_01()
+{
+	m_CharPlayerHuman_Owner->SetArmLength_CameraFollow_01(0.0f, 0.5f);
+	b_CanBreakOut = true;
+}
+
+void UPlayerHumanState_UnarmedDash::HandleAnimNotify_EndMontage()
+{
+	Super::HandleAnimNotify_EndMontage();
+	if (FMath::Abs(m_MoveForwardValue) < 0.1f && FMath::Abs(m_MoveRightValue) < 0.1f)
+	{
+		ChangeState(FString(TEXT("PlayerHumanState_UnarmedIdle")));
+	}
+	else
+	{
+		ChangeState(FString(TEXT("PlayerHumanState_UnarmedJog")));
+	}
+}
+
+
 
 
 /**
@@ -96,26 +109,6 @@ void UPlayerHumanState_UnarmedDash::HandleInput_MoveForward(float p_AxisValue)
 void UPlayerHumanState_UnarmedDash::HandleInput_MoveRight(float p_AxisValue)
 {
 	m_MoveRightValue = p_AxisValue;
-}
-
-void UPlayerHumanState_UnarmedDash::HandleAction_EndMontage()
-{
-	if (!b_IsInState) return;
-	if (FMath::Abs(m_MoveForwardValue) < 0.1f && FMath::Abs(m_MoveRightValue) < 0.1f)
-	{
-		ChangeState(FString(TEXT("PlayerHumanState_UnarmedIdle")));
-	}
-	else
-	{
-		ChangeState(FString(TEXT("PlayerHumanState_UnarmedJog")));
-	}
-}
-
-void UPlayerHumanState_UnarmedDash::HandleAction_AnimNotify_01()
-{
-	if (!b_IsInState) return;
-	m_CharPlayerHuman_Owner->SetArmLength_CameraFollow_01(0.0f, 0.5f);
-	b_CanBreakOut = true;
 }
 
 void UPlayerHumanState_UnarmedDash::PlayDashMontage()

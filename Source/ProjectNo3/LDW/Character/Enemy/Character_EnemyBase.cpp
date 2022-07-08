@@ -132,6 +132,16 @@ void ACharacter_EnemyBase::RotateToFaceActor(AActor* p_TargetActor, float p_Blen
 	RotateToRotation(LookAtRotator, 0.0f);
 }
 
+void ACharacter_EnemyBase::DisableRootMotion(float p_DisableTime)
+{
+	if (p_DisableTime > 0.0f && GetMesh() != nullptr && GetMesh()->GetAnimInstance() != nullptr)
+	{
+		GetMesh()->GetAnimInstance()->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
+		m_Timeline_DisableRootMotion.SetPlayRate(1.0f / p_DisableTime);
+		m_Timeline_DisableRootMotion.PlayFromStart();
+	}
+}
+
 void ACharacter_EnemyBase::SetCapsuleSize(float p_NewCapsuleHalfHeight, float p_NewCapsuleRadius, float p_BlendTime)
 {
 	if (p_NewCapsuleHalfHeight <= 0.0f || p_NewCapsuleRadius <= 0.0f) return;
@@ -203,6 +213,19 @@ void ACharacter_EnemyBase::InitTimelines()
 	m_Timeline_CapsuleSizeControl.AddInterpFloat(m_CurveFloat_AlphaEaseInOut, OnTimelineFloat_CapsuleSizeControl_01);
 	m_Timeline_CapsuleSizeControl.SetTimelineLength(1.0f);
 	m_Timeline_CapsuleSizeControl.SetLooping(false);
+
+	// Create m_Timeline_DisableRootMotion
+	FOnTimelineEventStatic OnTimelineEvent_DisableRootMotion_EndEvent;
+	OnTimelineEvent_DisableRootMotion_EndEvent.BindLambda([&]()
+		{
+			if (GetMesh() != nullptr && GetMesh()->GetAnimInstance() != nullptr)
+			{
+				GetMesh()->GetAnimInstance()->SetRootMotionMode(ERootMotionMode::RootMotionFromEverything);
+			}
+		});
+	m_Timeline_DisableRootMotion.SetTimelineFinishedFunc(OnTimelineEvent_DisableRootMotion_EndEvent);
+	m_Timeline_DisableRootMotion.SetLooping(false);
+	m_Timeline_DisableRootMotion.SetTimelineLength(1.0f);
 }
 
 void ACharacter_EnemyBase::TickTimelines(float p_DeltaTime)
@@ -210,6 +233,7 @@ void ACharacter_EnemyBase::TickTimelines(float p_DeltaTime)
 	m_Timeline_LocationControl.TickTimeline(p_DeltaTime);
 	m_Timeline_RotationControl.TickTimeline(p_DeltaTime);
 	m_Timeline_CapsuleSizeControl.TickTimeline(p_DeltaTime);
+	m_Timeline_DisableRootMotion.TickTimeline(p_DeltaTime);
 }
 
 void ACharacter_EnemyBase::CalculateMovement()

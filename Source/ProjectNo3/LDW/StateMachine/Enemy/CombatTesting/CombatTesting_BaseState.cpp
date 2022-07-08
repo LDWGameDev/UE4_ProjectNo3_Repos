@@ -2,6 +2,7 @@
 
 
 #include "CombatTesting_BaseState.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 /**
@@ -23,6 +24,8 @@ void UCombatTesting_BaseState::EnterState()
 {
 	Super::EnterState();
 	if (m_Character_EnemyCombatTestingREF == nullptr) return;
+	//FString CurrentState = UKismetSystemLibrary::GetDisplayName(this);
+	//UE_LOG(LogTemp, Warning, TEXT("CombatTesting_BaseState - CurretnState: %s"), *CurrentState);
 }
 
 void UCombatTesting_BaseState::TickState(float p_DeltaTime)

@@ -28,7 +28,6 @@ private:
 	FDelegate1_MovementSignature* m_MoveForwardDelegateREF;
 	FDelegate1_MovementSignature* m_MoveRightDelegateREF;
 	FDelegate_LandedSignature* m_Landed_DelegateREF;
-	FDelegate_ActionSignature* m_EndMontage_DelegateREF;
 
 	float m_MoveForwardValue;
 	float m_MoveRightValue;
@@ -44,10 +43,12 @@ public:
 	virtual void ExitState() override;
 	virtual void BindInputHandlingFunctions(AController* p_PlayerController) override;
 	virtual void UnBindInputHandlingFunctions() override;
+
+	virtual void HandleAnimNotify_EndMontage() override;
+
 protected:
 private:
 	void HandleInput_MoveForward(float p_AxisValue);
 	void HandleInput_MoveRight(float p_AxisValue);
 	void HandleEvent_Landed();
-	void HandleEvent_EndAction();
 };

@@ -222,7 +222,7 @@ void ACharacter_Enemy_CombatTesting::TestFunction(int32 p_CommandIndex)
 	{
 	case 0:
 	{
-		m_StateMachine_01->ChangeState((TEXT("CombatTesting_FallState")));
+		m_StateMachine_01->ChangeState(TEXT("CombatTesting_IdleState"));
 		break;
 	}
 	case 1:

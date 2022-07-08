@@ -53,12 +53,10 @@ void UPlayerHumanState_AssassinJump::BindInputHandlingFunctions(AController* p_P
 		m_MoveForwardDelegateREF = IPlayerInput->GetDelegate_MoveForward();
 		m_MoveRightDelegateREF = IPlayerInput->GetDelegate_MoveRight();
 		m_Landed_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_Landed);
-		m_EndMontage_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndMontage);
 
 		if (m_MoveForwardDelegateREF != nullptr) m_MoveForwardDelegateREF->AddUObject(this, &UPlayerHumanState_AssassinJump::HandleInput_MoveForward);
 		if (m_MoveRightDelegateREF != nullptr) m_MoveRightDelegateREF->AddUObject(this, &UPlayerHumanState_AssassinJump::HandleInput_MoveRight);
 		if (m_Landed_DelegateREF != nullptr) m_Landed_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinJump::HandleEvent_Landed);
-		if (m_EndMontage_DelegateREF != nullptr) m_EndMontage_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinJump::HandleEvent_EndAction);
 	}
 }
 
@@ -68,8 +66,13 @@ void UPlayerHumanState_AssassinJump::UnBindInputHandlingFunctions()
 	if (m_MoveForwardDelegateREF != nullptr) m_MoveForwardDelegateREF->RemoveAll(this);
 	if (m_MoveRightDelegateREF != nullptr) m_MoveRightDelegateREF->RemoveAll(this);
 	if (m_Landed_DelegateREF != nullptr) m_MoveRightDelegateREF->RemoveAll(this);
-	if (m_EndMontage_DelegateREF != nullptr) m_EndMontage_DelegateREF->RemoveAll(this);
 }
+
+void UPlayerHumanState_AssassinJump::HandleAnimNotify_EndMontage()
+{
+	ChangeState("PlayerHumanState_AssassinFalling");
+}
+
 
 
 
@@ -96,10 +99,4 @@ void UPlayerHumanState_AssassinJump::HandleEvent_Landed()
 	m_CharPlayerHuman_Owner->PlayMontageFromTable("Assassin_LandAdditive");
 	if (FMath::Abs(m_MoveForwardValue) > 0.01f || (FMath::Abs(m_MoveRightValue) > 0.01f)) ChangeState("PlayerHumanState_AssassinJog");
 	else ChangeState("PlayerHumanState_AssassinIdle");
-}
-
-void UPlayerHumanState_AssassinJump::HandleEvent_EndAction()
-{
-	if (!b_IsInState) return;
-	ChangeState("PlayerHumanState_AssassinFalling");
 }

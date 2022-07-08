@@ -36,7 +36,6 @@ private:
 	FDelegate_ActionSignature* m_LightAttackStart_DelegateREF;
 	FDelegate_ActionSignature* m_HeavyAttackStart_DelegateREF;
 
-
 	bool b_IsHoldingRunKey;
 	float m_MoveForwardValue;
 	float m_MoveRightValue;

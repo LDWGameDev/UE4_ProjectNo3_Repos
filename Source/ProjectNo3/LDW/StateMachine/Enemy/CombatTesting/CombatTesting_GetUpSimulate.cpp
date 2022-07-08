@@ -47,17 +47,23 @@ void UCombatTesting_GetUpSimulate::EnterState()
 	FTimerHandle TimerHandle_DelaySavePoseSnapshot;
 	m_Character_EnemyCombatTestingREF->GetWorld()->GetTimerManager().SetTimer(TimerHandle_DelaySavePoseSnapshot, [&]()
 		{
-			m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->SavePoseSnapshot(FName("PoseSnapshot_DamageGetUp"));
-			if (b_SavedIsFacingUp) m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(TEXT("Damage_GetUp_F_01")));
-			else m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(TEXT("Damage_GetUp_B_01")));
+			if (b_IsInState)
+			{
+				m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->SavePoseSnapshot(FName("PoseSnapshot_DamageGetUp"));
+				if (b_SavedIsFacingUp) m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(TEXT("Damage_GetUp_F_01")));
+				else m_Character_EnemyCombatTestingREF->PlayMontageFromTable_DamageMontage(FName(TEXT("Damage_GetUp_B_01")));
+			}
 		}, 0.2f, false);
 
 	// Delay play get up montage
 	FTimerHandle TimerHandle_DelayStopSimulatingPhysics;
 	m_Character_EnemyCombatTestingREF->GetWorld()->GetTimerManager().SetTimer(TimerHandle_DelayStopSimulatingPhysics, [&]()
 		{
-			m_Character_EnemyCombatTestingREF->GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("Pelvis"), false, true);
-			m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->b_IsSimulatingPhysics_DamageKnockOut = false;
+			if (b_IsInState)
+			{
+				m_Character_EnemyCombatTestingREF->GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("Pelvis"), false, true);
+				m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->b_IsSimulatingPhysics_DamageKnockOut = false;
+			}
 		}, 0.3f, false);
 }
 
@@ -69,6 +75,8 @@ void UCombatTesting_GetUpSimulate::TickState(float p_DeltaTime)
 void UCombatTesting_GetUpSimulate::ExitState()
 {
 	Super::ExitState();
+	m_Character_EnemyCombatTestingREF->GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("Pelvis"), false, true);
+	m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->b_IsSimulatingPhysics_DamageKnockOut = false;
 }
 
 void UCombatTesting_GetUpSimulate::HandleEndMontage()
