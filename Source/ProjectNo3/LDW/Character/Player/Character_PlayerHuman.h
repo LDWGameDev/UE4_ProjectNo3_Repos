@@ -26,6 +26,7 @@ DECLARE_MULTICAST_DELEGATE(FDelegate_LandedSignature)
 DECLARE_MULTICAST_DELEGATE(FDelegate_StartFallingSignature)
 
 
+class UPlayerHuman_BaseState;
 class UPlayerHumanState_UnarmedIdle;
 class UPlayerHumanState_UnarmedJog;
 class UPlayerHumanState_UnarmedJump;
@@ -55,20 +56,27 @@ class UPlayerHumanState_AssassinHA_C3_2;
 class UPlayerHumanState_AssGetUp;
 class UPlayerHumanState_AssKnockDown;
 
+class AActor_PlayerThrowingWeapon;
 class AActor_HoldingWeapon;
+
+class UNiagaraSystem;
+
 
 
 /**
  * 
  */
+
 UCLASS(Abstract)
 class PROJECTNO3_API ACharacter_PlayerHuman : public ACharacter
 {
 	GENERATED_BODY()
 
+
 /**
  * Properties
  */
+
 public:
 	// ObjectType to check for ground
 	UPROPERTY(EditDefaultsOnly, Category = "Custom PlayerHuman")
@@ -87,6 +95,7 @@ public:
 		TSubclassOf<AActor_CameraSystem> m_Subclass_CameraSystemActor;
 
 
+
 	// ObjectType to check if hitboxes hit or not
 	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
 		TArray<TEnumAsByte<EObjectTypeQuery>> m_ObjectTypes_AttackHitboxTrace;
@@ -99,7 +108,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
 		FGameplayTagContainer m_TagContainer_ClosetTargetToAttack;
 
-		
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
+		TSubclassOf<AActor_PlayerThrowingWeapon> m_SubClass_PlayerThrowingWeapon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Custom Combat System")
+		UNiagaraSystem* m_NiagaraSystem_HitDarkness;
+	
+	
 
 	// Ease in and out alpha (0 - 1) curve
 	UPROPERTY(EditDefaultsOnly, Category = "Custom Timeline")
@@ -202,6 +217,18 @@ protected:
 
 
 private:
+	// Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
+		UStateMachineComponent* m_StateMachine_01;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
+		UControlRigComponent* m_ControlRig_01;
+
+	// Camera components
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
+		USpringArmComponent* m_SpringArm_Follow_01;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
+		UCameraComponent* m_Camera_Follow_01;
+
 	UPROPERTY()
 		AActor_CameraSystem* m_CameraSystemActor;
 
@@ -229,6 +256,11 @@ private:
 	FRotator m_SavedRotator;
 	FRotator m_NewRotator;
 
+	// Timeline controls Location
+	FTimeline m_Timeline_LocationControl;
+	FVector m_SavedLocation;
+	FVector m_SavedNewLocation;
+
 	// Timeline controls target arm length of m_SpringArm_Follow_01
 	FTimeline m_Timeline_CameraFollow_01;
 	float m_SavedArmLength_Follow_01;
@@ -248,6 +280,7 @@ private:
 	float m_SavedNewCapsuleRadius;
 
 
+
 /**
  * Functions
  */
@@ -264,8 +297,12 @@ public:
 
 	// Get m_MovingSpeed
 	float GetMovingSpeed();
+
 	// Get m_StateMachine
 	UStateMachineComponent* GetStateMachine();
+
+	// Get current state of m_StateMachine_01 casted to PlayerHuman_BaseState 
+	UPlayerHuman_BaseState* GetCurrentState_PlayerHumanBaseState();
 
 
 	// Movement this character using movement input
@@ -279,6 +316,9 @@ public:
 	
 	// Rotate this character to face another actor over p_BlendTime time. Only rotate the yaw value, roll and pitch remain 0.
 	void RotateToFaceTarget(const AActor* p_ActorToFace, float p_BlendTime);
+
+	// Move this character to p_NewLocation over p_BlendTime time using m_Timeline_LocationControl
+	void MoveToLocation(const FVector& p_NewLocation, float p_BlendTime);
 	
 	// Play montage from DataTable m_DataTable_ActionMontages
 	bool PlayMontageFromTable(const FName& p_MontageID);
@@ -316,25 +356,14 @@ public:
 	// Reset CapsuleComponent size to default const values declared in properties
 	void ResetCapsuleSize(float p_BlendTime);
 
+	void SpawnNiagaraSystem_AtLocation(int p_NiagaraSystemID, const FVector& p_Location);
+
 
 protected:
 	virtual void BeginPlay() override;
 
 
 private:
-	// Components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
-		UStateMachineComponent* m_StateMachine_01;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
-		UControlRigComponent* m_ControlRig_01;
-
-	// Camera components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
-		USpringArmComponent* m_SpringArm_Follow_01;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom PlayerHuman", meta = (AllowPrivateAccess = "true"))
-		UCameraComponent* m_Camera_Follow_01;
-
-
 	// Handle possession and dispossession this character
 	void HandleOnPossessed(AController* p_Controller);
 	void HandleOnUnPossessed();

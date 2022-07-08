@@ -61,15 +61,9 @@ void UPlayerHumanState_AssassinHA_C1_2::BindInputHandlingFunctions(AController* 
 	if (IPlayerInput == nullptr) return;
 	m_MoveForward_DelegateREF = IPlayerInput->GetDelegate_MoveForward();
 	m_MoveRight_DelegateREF = IPlayerInput->GetDelegate_MoveRight();
-	m_AnimNotify_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_AnimNotify_01);
-	m_EndAttack_02_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_EndAttack_02); 
-	m_TriggerAttack_01_DelegateREF = &(m_CharPlayerHuman_Owner->m_Delegate_TriggerAttack_01);
 
 	if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_MoveForward);
 	if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_MoveRight);
-	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_AnimNotify_01);
-	if (m_EndAttack_02_DelegateREF != nullptr) m_EndAttack_02_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleAction_EndAttack_02);
-	if (m_TriggerAttack_01_DelegateREF != nullptr) m_TriggerAttack_01_DelegateREF->AddUObject(this, &UPlayerHumanState_AssassinHA_C1_2::HandleTriggerAttack_01);
 
 }
 
@@ -78,13 +72,33 @@ void UPlayerHumanState_AssassinHA_C1_2::UnBindInputHandlingFunctions()
 	Super::UnBindInputHandlingFunctions();
 	if (m_MoveForward_DelegateREF != nullptr) m_MoveForward_DelegateREF->RemoveAll(this);
 	if (m_MoveRight_DelegateREF != nullptr) m_MoveRight_DelegateREF->RemoveAll(this);
-	if (m_AnimNotify_01_DelegateREF != nullptr) m_AnimNotify_01_DelegateREF->RemoveAll(this);
-	if (m_EndAttack_02_DelegateREF != nullptr) m_EndAttack_02_DelegateREF->RemoveAll(this);
 
 	m_MoveForward_DelegateREF = nullptr;
 	m_MoveRight_DelegateREF = nullptr;
-	m_AnimNotify_01_DelegateREF = nullptr;
-	m_EndAttack_02_DelegateREF = nullptr;
+}
+
+void UPlayerHumanState_AssassinHA_C1_2::HandleAnimNotify_AnimNotify_01()
+{
+	m_CharPlayerHuman_Owner->DisableRootMotionForTime(0.25f);
+	m_CharPlayerHuman_Owner->ResetCapsuleSize(0.1f);
+	b_CanBreakOut = true;
+}
+
+void UPlayerHumanState_AssassinHA_C1_2::HandleAnimNotify_EndMontage()
+{
+	Super::HandleAnimNotify_EndMontage();
+	if (FMath::Abs(m_MoveForwardValue) > 0.1f || FMath::Abs(m_MoveRightValue) > 0.1f)
+	{
+		m_CharPlayerHuman_Owner->StopAnimMontage();
+		m_CharPlayerHuman_Owner->DisableRootMotionForTime(0.1f);
+		ChangeState("PlayerHumanState_AssassinJog");
+	}
+	else ChangeState("PlayerHumanState_AssassinIdle");
+}
+
+void UPlayerHumanState_AssassinHA_C1_2::HandleAnimNotify_TriggerAttack_01()
+{
+	CheckForHittingTarget(m_Hitboxes_01, m_AttackState_01, false);
 }
 
 
@@ -104,30 +118,4 @@ void UPlayerHumanState_AssassinHA_C1_2::HandleAction_MoveRight(float p_Value)
 {
 	if (!b_IsInState) return;
 	m_MoveRightValue = p_Value;
-}
-
-void UPlayerHumanState_AssassinHA_C1_2::HandleAction_AnimNotify_01()
-{
-	if (!b_IsInState) return;
-	m_CharPlayerHuman_Owner->DisableRootMotionForTime(0.25f);
-	m_CharPlayerHuman_Owner->ResetCapsuleSize(0.1f);
-	b_CanBreakOut = true;
-}
-
-void UPlayerHumanState_AssassinHA_C1_2::HandleAction_EndAttack_02()
-{
-	if (!b_IsInState) return;
-	if (FMath::Abs(m_MoveForwardValue) > 0.1f || FMath::Abs(m_MoveRightValue) > 0.1f)
-	{
-		m_CharPlayerHuman_Owner->StopAnimMontage();
-		m_CharPlayerHuman_Owner->DisableRootMotionForTime(0.1f);
-		ChangeState("PlayerHumanState_AssassinJog");
-	}
-	else ChangeState("PlayerHumanState_AssassinIdle");
-}
-
-void UPlayerHumanState_AssassinHA_C1_2::HandleTriggerAttack_01()
-{
-	if (!b_IsInState) return;
-	CheckForHittingTarget(m_Hitboxes_01, m_AttackState_01, false);
 }

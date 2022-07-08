@@ -7,6 +7,8 @@
 #include "System/CombatSystem/System_CombatContainer.h"
 #include "PlayerHumanState_AssassinHA_C2_4.generated.h"
 
+
+
 /**
  * 
  */
@@ -14,14 +16,16 @@ UCLASS()
 class PROJECTNO3_API UPlayerHumanState_AssassinHA_C2_4 : public UPlayerHuman_BaseState
 {
 	GENERATED_BODY()
-	
+
+
 
 /**
  * Properties
  */
 
 public:
-
+	UPROPERTY()
+		AActor* m_TargetActor;
 protected:
 
 private:
@@ -29,11 +33,14 @@ private:
 	const FVector c_SocketOffset = FVector(0.0f, 80.0f, 20.0f);
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_01;
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_02;
+	FStruct_AttackStateDefinition m_AttackState_01 = FStruct_AttackStateDefinition(EHitType::LightPush, EDirectionAttack6Ways::Front, true, FVector(200.0f, 20.0f, 0.0f), 0.1f);
+	FStruct_AttackStateDefinition m_AttackState_02 = FStruct_AttackStateDefinition(EHitType::LightPush, EDirectionAttack6Ways::Right, false, FVector(), 0.0f);
+	FStruct_AttackStateDefinition m_AttackState_03 = FStruct_AttackStateDefinition(EHitType::LightPush, EDirectionAttack6Ways::Left, false, FVector(), 0.0f);
+	FStruct_AttackStateDefinition m_AttackState_04 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Front, true, FVector(430.0f, 120.0f, 0.0f), 0.6f);
+	FStruct_AttackStateDefinition m_AttackState_05 = FStruct_AttackStateDefinition(EHitType::KnockSimulate, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
 
 	FDelegate1_MovementSignature* m_MoveForward_DelegateREF;
 	FDelegate1_MovementSignature* m_MoveRight_DelegateREF;
-	FDelegate_ActionSignature* m_AnimNotify_01_DelegateREF;
-	FDelegate_ActionSignature* m_EndAttack_02_DelegateREF;
 
 	float m_MoveForwardValue;
 	float m_MoveRightValue;
@@ -54,11 +61,17 @@ public:
 	virtual void BindInputHandlingFunctions(AController* p_PlayerController) override;
 	virtual void UnBindInputHandlingFunctions() override;
 
+	virtual void HandleAnimNotify_AnimNotify_01() override;
+	virtual void HandleAnimNotify_EndMontage() override;
+	virtual void HandleAnimNotify_TriggerAttack_01() override;
+	virtual void HandleAnimNotify_TriggerAttack_02() override;
+	virtual void HandleAnimNotify_TriggerAttack_03() override;
+	virtual void HandleAnimNotify_TriggerAttack_04() override;
+	virtual void HandleAnimNotify_TriggerAttack_05() override;
+
 protected:
 
 private:
 	void HandleAction_MoveForward(float p_Value);
 	void HandleAction_MoveRight(float p_Value);
-	void HandleAction_AnimNotify_01();
-	void HandleAction_EndAttack_02();
 };

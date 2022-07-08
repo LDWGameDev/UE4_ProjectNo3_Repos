@@ -34,11 +34,14 @@ private:
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_04;
 	TArray<FStruct_SphereTrace_Offset> m_Hitboxes_05;
 
+	FStruct_AttackStateDefinition m_AttackState_01 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Left, true, FVector(220.0f, -30.0f, 0.0f), 1.25f);
+	FStruct_AttackStateDefinition m_AttackState_02 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Right, true, FVector(-200.0f, -50.0f, 0.0f), 1.25f);
+	FStruct_AttackStateDefinition m_AttackState_03 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Right, true, FVector(60.0f, -180.0f, 0.0f), 1.25f);
+	FStruct_AttackStateDefinition m_AttackState_04 = FStruct_AttackStateDefinition(EHitType::Push, EDirectionAttack6Ways::Right, true, FVector(-30.0f, 140.0f, 0.0f), 1.0f);
+	FStruct_AttackStateDefinition m_AttackState_05 = FStruct_AttackStateDefinition(EHitType::KnockSimulate, EDirectionAttack6Ways::Front, false, FVector(), 0.0f);
+
 	FDelegate1_MovementSignature* m_MoveForward_DelegateREF;
 	FDelegate1_MovementSignature* m_MoveRight_DelegateREF;
-	FDelegate_ActionSignature* m_AnimNotify_01_DelegateREF;
-	FDelegate_ActionSignature* m_AnimNotify_02_DelegateREF;
-	FDelegate_ActionSignature* m_EndAttack_02_DelegateREF;
 
 	float m_MoveForwardValue;
 	float m_MoveRightValue;
@@ -46,16 +49,8 @@ private:
 	bool b_CanBreakOut;
 	bool b_CameraSequenceValid;
 
-	FVector m_SavedCameraLocation_1;
-	FVector m_SavedCameraLocation_2;
-	FVector m_SavedCameraLocation_3;
-	FVector m_SavedCameraLocation_4;
-	FVector m_SavedCameraLookAtLocation_1;
-	FVector m_SavedCameraLookAtLocation_2;
-	FVector m_SavedCameraLookAtLocation_3;
-	FVector m_SavedCameraLookAtLocation_4;
-		
-		
+
+
 /**
  * Functions
  */
@@ -67,13 +62,18 @@ public:
 	virtual void ExitState() override;
 	virtual void BindInputHandlingFunctions(AController* p_PlayerController) override;
 	virtual void UnBindInputHandlingFunctions() override;
+
+	virtual void HandleAnimNotify_AnimNotify_01() override;
+	virtual void HandleAnimNotify_EndMontage() override;
+	virtual void HandleAnimNotify_TriggerAttack_01() override;
+	virtual void HandleAnimNotify_TriggerAttack_02() override;
+	virtual void HandleAnimNotify_TriggerAttack_03() override;
+	virtual void HandleAnimNotify_TriggerAttack_04() override;
+	virtual void HandleAnimNotify_TriggerAttack_05() override;
 		
 protected:
 		
 private:
 	void HandleAction_MoveForward(float p_Value);
 	void HandleAction_MoveRight(float p_Value);
-	void HandleAction_AnimNotify_01();
-	void HandleAction_AnimNotify_02();
-	void HandleAction_EndAttack_02();
 };

@@ -27,7 +27,6 @@ void UAnimInstance_Enemy_CombatTesting::NativeUpdateAnimation(float DeltaSeconds
 void UAnimInstance_Enemy_CombatTesting::CheckCurrentState(UBaseState* p_CurrentState)
 {
 	if (p_CurrentState == nullptr || p_CurrentState->GetStateTag() == nullptr || !p_CurrentState->GetStateTag()->IsValid()) return;
-	if (p_CurrentState->GetStateTag()->MatchesAny(m_TagContainer_InAirStates)) b_IsInAir = true;
-	else b_IsInAir = false;
+	b_IsInAir = p_CurrentState->GetStateTag()->MatchesAny(m_TagContainer_InAirStates);
 }
 

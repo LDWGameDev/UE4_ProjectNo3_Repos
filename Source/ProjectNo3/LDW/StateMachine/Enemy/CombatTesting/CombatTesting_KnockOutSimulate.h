@@ -27,6 +27,7 @@ private:
 	const float c_SnapCharacterPositionSpeed = 5.0f;
 	const float c_TimeToGetUpAfterSimulating = 2.0f;
 	bool b_HasSimulatedPhysics;
+	bool b_HasChangeToGetUpSimulate;
 	FVector m_SavedCharacterOffsetLocation;
 
 

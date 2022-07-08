@@ -38,11 +38,6 @@ private:
 
 	FDelegate1_MovementSignature* m_MoveForward_DelegateREF;
 	FDelegate1_MovementSignature* m_MoveRight_DelegateREF;
-	FDelegate_ActionSignature* m_EndAttack_01_DelegateREF;
-	FDelegate_ActionSignature* m_AnimNotify_01_DelegateREF;
-	FDelegate_ActionSignature* m_TriggerAttack_01_DelegateREF;
-	FDelegate_ActionSignature* m_TriggerAttack_02_DelegateREF;
-	FDelegate_ActionSignature* m_TriggerAttack_03_DelegateREF;
 
 	float m_MoveForwardValue;
 	float m_MoveRightValue;
@@ -63,14 +58,15 @@ public:
 	virtual void BindInputHandlingFunctions(AController* p_PlayerController) override;
 	virtual void UnBindInputHandlingFunctions() override;
 
+	virtual void HandleAnimNotify_AnimNotify_01() override;
+	virtual void HandleAnimNotify_EndMontage() override;
+	virtual void HandleAnimNotify_TriggerAttack_01() override;
+	virtual void HandleAnimNotify_TriggerAttack_02() override;
+	virtual void HandleAnimNotify_TriggerAttack_03() override;
+
 protected:
 
 private:
 	void HandleAction_MoveForward(float p_Value);
 	void HandleAction_MoveRight(float p_Value);
-	void HandleAction_EndAttack_01();
-	void HandleAction_AnimNotify_01();
-	void HandleAction_TriggerAttack_01();
-	void HandleAction_TriggerAttack_02();
-	void HandleAction_TriggerAttack_03();
 };

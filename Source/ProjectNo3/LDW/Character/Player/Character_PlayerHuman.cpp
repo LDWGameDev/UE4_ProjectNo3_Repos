@@ -6,6 +6,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TimerManager.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 #include "Library/Library_CustomMath.h"
 #include "StateMachine/Player/ContainerPlayerStates.h"
@@ -143,6 +145,12 @@ float ACharacter_PlayerHuman::GetMovingSpeed() { return m_MovingSpeed; }
 
 UStateMachineComponent* ACharacter_PlayerHuman::GetStateMachine() { return m_StateMachine_01; }
 
+UPlayerHuman_BaseState* ACharacter_PlayerHuman::GetCurrentState_PlayerHumanBaseState()
+{
+	if (m_StateMachine_01 == nullptr || m_StateMachine_01->GetCurrentState() == nullptr) return nullptr;
+	return Cast<UPlayerHuman_BaseState>(m_StateMachine_01->GetCurrentState());
+}
+
 
 
 /**
@@ -196,6 +204,21 @@ void ACharacter_PlayerHuman::RotateToFaceTarget(const AActor* p_ActorToFace, flo
 	LookAtRotator.Pitch = 0.0f;
 	LookAtRotator.Roll = 0.0f;
 	RotateToRotation(LookAtRotator, p_BlendTime);
+}
+
+void ACharacter_PlayerHuman::MoveToLocation(const FVector& p_NewLocation, float p_BlendTime)
+{
+	if (p_BlendTime <= 0.0f)
+	{
+		SetActorLocation(p_NewLocation);
+	}
+	else
+	{
+		m_SavedLocation = GetActorLocation();
+		m_SavedNewLocation = p_NewLocation;
+		m_Timeline_LocationControl.SetPlayRate(1.0f / p_BlendTime);
+		m_Timeline_LocationControl.PlayFromStart();
+	}
 }
 
 bool ACharacter_PlayerHuman::PlayMontageFromTable(const FName& p_MontageID)
@@ -361,6 +384,18 @@ void ACharacter_PlayerHuman::ResetCapsuleSize(float p_BlendTime)
 	SetCapsuleSize(c_DefaultCapsuleHalfHeight, c_DefaultCapsuleRadius, p_BlendTime);
 }
 
+void ACharacter_PlayerHuman::SpawnNiagaraSystem_AtLocation(int p_NiagaraSystemID, const FVector& p_Location)
+{
+	switch (p_NiagaraSystemID)
+	{
+	case 0:
+	{
+		if (m_NiagaraSystem_HitDarkness == nullptr) break;
+		UNiagaraComponent* NiaSystemComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, m_NiagaraSystem_HitDarkness, p_Location);
+		break;
+	}
+	}
+}
 
 
 
@@ -571,6 +606,17 @@ void ACharacter_PlayerHuman::InitTimelines()
 	m_Timeline_Rotation.SetLooping(false);
 
 	//
+	// Create timeline m_Timeline_LocationControl
+	FOnTimelineFloatStatic OnTimelineFloat_LocationControl_01;
+	OnTimelineFloat_LocationControl_01.BindLambda([&](float p_Value)
+		{
+			SetActorLocation(FMath::Lerp(m_SavedLocation, m_SavedNewLocation, p_Value));
+		});
+	m_Timeline_LocationControl.AddInterpFloat(m_CurveFloat_EaseInOutAlpha, OnTimelineFloat_LocationControl_01);
+	m_Timeline_LocationControl.SetLooping(false);
+	m_Timeline_LocationControl.SetTimelineLength(1.0f);
+
+	//
 	// Create timeline handles camera group 01 (m_Camera_Follow_01 + m_SpringArm_Follow_01)
 	FOnTimelineFloatStatic OnTimelineFloat_CameraFollow_01_Progress_01;
 	OnTimelineFloat_CameraFollow_01_Progress_01.BindLambda([&](float p_Value)
@@ -618,6 +664,7 @@ void ACharacter_PlayerHuman::InitTimelines()
 void ACharacter_PlayerHuman::TimelineTicks(float p_DeltaTime)
 {
 	m_Timeline_ControlRigFootIK.TickTimeline(p_DeltaTime);
+	m_Timeline_LocationControl.TickTimeline(p_DeltaTime);
 	m_Timeline_Rotation.TickTimeline(p_DeltaTime);
 	m_Timeline_CameraFollow_01.TickTimeline(p_DeltaTime);
 	m_Timeline_WeaponBuff_01.TickTimeline(p_DeltaTime);

@@ -54,6 +54,16 @@ public:
 	// Called when Character_PlayerHuman instance get dispossessed
 	virtual void UnBindInputHandlingFunctions();
 
+	// AnimNotify handling functions. Called in AnimInstance
+	virtual void HandleAnimNotify_AnimNotify_01();
+	virtual void HandleAnimNotify_AnimNotify_02();
+	virtual void HandleAnimNotify_AnimNotify_03();
+	virtual void HandleAnimNotify_TriggerAttack_01();
+	virtual void HandleAnimNotify_TriggerAttack_02();
+	virtual void HandleAnimNotify_TriggerAttack_03();
+	virtual void HandleAnimNotify_TriggerAttack_04();
+	virtual void HandleAnimNotify_TriggerAttack_05();
+	virtual void HandleAnimNotify_EndMontage();
 
 protected:
 	// Set arm length and socket offset of CameraFollow_01

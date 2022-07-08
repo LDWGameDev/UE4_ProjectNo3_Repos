@@ -29,6 +29,8 @@ UCombatTesting_KnockOutSimulate::UCombatTesting_KnockOutSimulate()
 void UCombatTesting_KnockOutSimulate::EnterState()
 {
 	Super::EnterState();
+	b_HasSimulatedPhysics = false;
+	b_HasChangeToGetUpSimulate = false;
 	PlayKnockOutMontage();
 }
 
@@ -57,7 +59,11 @@ void UCombatTesting_KnockOutSimulate::TickState(float p_DeltaTime)
 void UCombatTesting_KnockOutSimulate::ExitState()
 {
 	Super::ExitState();
-	b_HasSimulatedPhysics = false;
+	if (!b_HasChangeToGetUpSimulate)
+	{
+		m_Character_EnemyCombatTestingREF->GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("Pelvis"), false, true);
+		m_Character_EnemyCombatTestingREF->m_AnimInstanceREF_EnemyCombatTesting->b_IsSimulatingPhysics_DamageKnockOut = false;
+	}
 }
 
 void UCombatTesting_KnockOutSimulate::HandleAnimNotify_01()
@@ -92,7 +98,11 @@ void UCombatTesting_KnockOutSimulate::StartSimulating()
 	FTimerHandle TimerHandle_DelayGetUp;
 	m_Character_EnemyCombatTestingREF->GetWorld()->GetTimerManager().SetTimer(TimerHandle_DelayGetUp, [&]()
 	{
-		ChangeState(TEXT("CombatTesting_GetUpSimulateState"));
+		if (b_IsInState)
+		{
+			b_HasChangeToGetUpSimulate = true;
+			ChangeState(TEXT("CombatTesting_GetUpSimulateState"));
+		}
 	}, c_TimeToGetUpAfterSimulating, false);
 }
 

@@ -59,6 +59,52 @@ void UPlayerHuman_BaseState::UnBindInputHandlingFunctions()
 
 }
 
+void UPlayerHuman_BaseState::HandleAnimNotify_AnimNotify_01()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_AnimNotify_02()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_AnimNotify_03()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_TriggerAttack_01()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_TriggerAttack_02()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_TriggerAttack_03()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_TriggerAttack_04()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_TriggerAttack_05()
+{
+
+}
+
+void UPlayerHuman_BaseState::HandleAnimNotify_EndMontage()
+{
+	if (GetStateTime_StartToNow() < 0.25f) return;
+}
+
+
 
 
 
@@ -134,6 +180,8 @@ void UPlayerHuman_BaseState::CheckForHittingTarget(TArray<FStruct_SphereTrace_Of
 					IAttackable->TakeHit(AttackDefinition);
 					m_HasGotHitActors.Add(HitResult.GetActor());
 					b_HasHitTarget = true;
+
+					m_CharPlayerHuman_Owner->SpawnNiagaraSystem_AtLocation(0, HitResult.Location);
 				}
 			}
 		}

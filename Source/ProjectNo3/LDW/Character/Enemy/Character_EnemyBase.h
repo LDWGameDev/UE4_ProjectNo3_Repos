@@ -75,6 +75,10 @@ private:
 	float m_SavedNewCapsuleHalfHeight;
 	float m_SavedNewCapsuleRadius;
 
+	// Timeline used for disabling RootMotion for an amount of time
+	FTimeline m_Timeline_DisableRootMotion;
+	
+
 
 
 
@@ -109,6 +113,9 @@ public:
 
 	// Rotate to face target actor. Only rotate Yaw, Pitch and Roll remain 0
 	void RotateToFaceActor(AActor* p_TargetActor, float p_BlendTime);
+
+	// Disable RootMotion for p_BlendTime using m_Timeline_DisableRootMotion
+	void DisableRootMotion(float p_DisableTime);
 
 	// Update CapsuleSize overtime using m_Timeline_CapsuleSizeControl 
 	void SetCapsuleSize(float p_NewCapsuleHalfHeight, float p_NewCapsuleRadius, float p_BlendTime);
